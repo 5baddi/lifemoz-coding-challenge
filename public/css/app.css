@@ -1,1 +1,7 @@
+html, body{
+    height: 100%;
+}
 
+.container-fluid .main-card{
+    height: 100vh;
+}

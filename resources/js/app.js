@@ -2,7 +2,7 @@ require('./bootstrap')
 
 // Import dependencies
 import Vue from 'vue'
-import { BootstrapVue } from 'bootstrap-vue'
+import { BootstrapVue, BContainer, BRow, BCol } from 'bootstrap-vue'
 
 // Import CSS files
 import 'bootstrap/dist/css/bootstrap.css'
@@ -15,8 +15,9 @@ import Signin from './views/signin.vue'
 Vue.use(BootstrapVue)
 
 // Register global components
-// Vue.component('BModal', BModal)
-// Vue.directive('b-modal', VBModal)
+Vue.component('BContainer', BContainer)
+Vue.component('BRow', BRow)
+Vue.component('BCol', BCol)
 
 // Init app
 const app = new Vue({
