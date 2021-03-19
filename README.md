@@ -7,7 +7,6 @@
 
 - PHP >= 7.3
 
-
 ## Getting started
 
 ### Dependencies installation
@@ -30,7 +29,7 @@ Run the following command to generate your app key:
 php artisan key:generate
 ```
 
-Run the database migrations (**Set the database connection in .env before migrating**)
+Run the database migrations (**Set the [database connection](https://laravel.com/docs/8.x/database#configuration) in .env before migrating**)
 
 ``` bash
 php artisan migrate
