@@ -13,6 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// App
+Route::get('/{any?}', App\Http\Controllers\FrontController::class)->where('any', '.*');
