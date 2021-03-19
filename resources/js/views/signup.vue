@@ -9,12 +9,12 @@
                         </b-col>
                         <b-col md="8">
                             <b-card-body title="S'inscrire">
-                                <b-form>
+                                <b-form class="mt-3 mb-3">
                                     <b-form-group
                                         id="fullname-group"
                                         label="Nom complet :"
                                         label-for="fullname">
-                                        
+
                                         <b-form-input
                                         id="fullname"
                                         v-model="fullname"
@@ -72,6 +72,12 @@
                                         </b-form-invalid-feedback>
                                     </b-form-group>
                                 </b-form>
+
+                                <b-row align-h="center">
+                                    <b-col cols="auto">
+                                        <b-text>Vous avez déjà un compte? <b-link href="#">Connectez-vous</b-link></b-text>
+                                    </b-col>
+                                </b-row>
                             </b-card-body>
                         </b-col>
                     </b-row>
