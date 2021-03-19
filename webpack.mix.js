@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+const path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -13,7 +14,32 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
     .vue()
+    .webpackConfig({
+        resolve: {
+            alias: {
+                '@img': path.resolve('public/img')
+            }
+        },
+        module: {
+            rules: [
+                {
+                    test: /(\.(png|jpe?g|gif|webp)$|^((?!font).)*\.svg$)/,
+                    loaders: {
+                      loader: 'file-loader',
+                      options: {
+                        name: 'images/[path][name].[ext]',
+                        context: 'frontend/src/assets/images'
+                      }
+                    }
+                }
+            ]
+        }
+    })
     .postCss('resources/css/app.css', 'public/css', [
         //
     ])
     .version();
+    
+   
+// Disable build notifications
+mix.disableNotifications();

@@ -2,7 +2,7 @@ require('./bootstrap')
 
 // Import dependencies
 import Vue from 'vue'
-import { BootstrapVue, BContainer, BRow, BCol } from 'bootstrap-vue'
+import { BootstrapVue, BContainer, BRow, BCol, BLink } from 'bootstrap-vue'
 
 // Import CSS files
 import 'bootstrap/dist/css/bootstrap.css'
@@ -18,6 +18,7 @@ Vue.use(BootstrapVue)
 Vue.component('BContainer', BContainer)
 Vue.component('BRow', BRow)
 Vue.component('BCol', BCol)
+Vue.component('BLink', BLink)
 
 // Init app
 const app = new Vue({
