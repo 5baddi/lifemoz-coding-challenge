@@ -26,25 +26,19 @@ Next you need to make a copy of the `.env.example` file and rename it to `.env` 
 
 Run the following command to generate your app key:
 
-```
+``` bash
 php artisan key:generate
-```
-
-Create the symbolic link:
-
-```
-php artisan storage:link
 ```
 
 Run the database migrations (**Set the database connection in .env before migrating**)
 
-```
+``` bash
 php artisan migrate
 ```
 
 Then start your server:
 
-```
+``` bash
 php artisan serve
 ```
 You can now access the server at http://localhost:8000
