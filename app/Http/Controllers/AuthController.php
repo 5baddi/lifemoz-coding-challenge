@@ -63,9 +63,29 @@ class AuthController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function signUp()
+    public function signUp(Request $request)
     {
+        try{
+            // create new account
+            $signedUser = $this->userService->signUp($request->input());
 
+            return response()->success(
+                __('auth.registered'),
+                $signedUser
+            );
+        }catch(InvalidArgumentException $ex){
+            return response()->error(
+                __('auth.signup_fields'),
+                [$ex->getMessage()],
+                $ex->getCode()
+            );
+        }catch(Exception $ex){
+            return response()->error(
+                __('messages.error'),
+                [$ex->getMessage()],
+                500
+            );
+        }
     }
 
     /**

@@ -17,3 +17,7 @@ button{
     height: 100% !important;
     width: auto;
 }
+
+.text-sm{
+    font-size: 10pt !important;
+}

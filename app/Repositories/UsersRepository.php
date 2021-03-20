@@ -11,5 +11,5 @@ class UsersRepository extends AbstractRepository
      *
      * @return string
      */
-    protected $model = \App\User::class;
+    protected $model = \App\Models\User::class;
 }

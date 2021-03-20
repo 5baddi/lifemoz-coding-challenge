@@ -19,4 +19,10 @@ return [
     'signin'                =>  'Vous vous connectez avec succès',
     'signup_fields'         =>  'Veuillez vous assurer que toutes les données saisies',
     'signout'               =>  'Vous vous êtes déconnecté avec succès',
+    'registered'            =>  'Vous vous êtes inscrit avec succès, veuillez vérifier le courriel pour validation',
+    'signup_fullname_field' =>  'Entrez votre nom et prénom',
+    'signup_password_field' =>  'Veuillez saisir le mot de passe',
+    'signup_email_exists'   =>  'Email déjà enregistré avec un autre compte',
+    'welcome_mail'          =>  'Bienvenue sur notre plateforme!',
+    'signup_thanks'         =>  'Merci pour votre inscription!',
 ];

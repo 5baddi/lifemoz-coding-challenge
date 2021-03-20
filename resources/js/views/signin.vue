@@ -59,7 +59,7 @@
     </b-container>
 </template>
 <script>
-import { BCard, BForm, BFormGroup, BFormInput, BLink } from 'bootstrap-vue'
+import { BCard, BForm, BFormGroup, BFormInput, BText, BLink } from 'bootstrap-vue'
 
 export default{
     components: {
@@ -67,7 +67,8 @@ export default{
         BForm,
         BFormGroup,
         BFormInput,
-        BLink
+        BText,
+        BLink,
     },
     computed: {
         validForm(){
