@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+// version 1 of auth module routes
+Route::prefix('v1')->group(function(){
+    // Public routes
+    Route::post('/signup', [AuthController::class, 'singUp']);
+    Route::post('/signin', [AuthController::class, 'signIn']);
+
+    // Private routes
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::post('/signout', [AuthController::class, 'signOut']);
+        Route::post('/{user?}/password/', [UserController::class, 'changePassword']);
+    });
+});

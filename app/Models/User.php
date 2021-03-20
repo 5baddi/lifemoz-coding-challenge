@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Notifications\Notifiable;
 use Ryancco\HasUuidRouteKey\HasUuidRouteKey;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -10,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuidRouteKey;
+    use HasFactory, Notifiable, HasUuidRouteKey, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'timezone'
+        'timezone',
+        'last_login'
     ];
 
     /**
@@ -31,7 +34,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        // 'remember_token',
     ];
 
     /**
@@ -41,5 +44,20 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'last_login'        => 'datetime',
     ];
+
+    /**
+     * Encrypt password
+     * 
+     * @param string $value
+     * @return self
+     */
+    public function setPasswordAttribute(string $value) : self
+    {
+        // Encrypt password
+        $this->attributes['password'] = Hash::make($value);
+
+        return $this;
+    }
 }
