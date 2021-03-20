@@ -71,7 +71,8 @@ class AuthController extends Controller
 
             return response()->success(
                 __('auth.registered'),
-                $signedUser
+                $signedUser,
+                201
             );
         }catch(InvalidArgumentException $ex){
             return response()->error(
@@ -118,6 +119,35 @@ class AuthController extends Controller
     }
 
     /**
+     * Verify token
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function verifyToken(Request $request)
+    {
+        try{
+            // Send change password
+            $passwordChanged = $this->userService->changePassword($request->input());
+
+            if($passwordChanged)
+                return response()->success(__('auth.password_updated'));
+        }catch(InvalidArgumentException $ex){
+            return response()->error(
+                __('auth.signup_fields'),
+                [$ex->getMessage()],
+                $ex->getCode()
+            );
+        }catch(Exception $ex){
+            return response()->error(
+                __('messages.error'),
+                [$ex->getMessage()],
+                500
+            );
+        }
+    }
+
+    /**
      * Sign out
      *
      * @param \Illuminate\Http\Request $request
@@ -129,7 +159,9 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->success(
-            __('auth.signout')
+            __('auth.signout'),
+            [],
+            204
         );
     }
 }

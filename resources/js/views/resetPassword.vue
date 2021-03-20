@@ -45,7 +45,7 @@
 
                                     <b-row align-h="end">
                                         <b-col cols="auto">
-                                            <b-button type="submit" variant="primary" :disabled="!confirmedPassword">Réinitialiser</b-button>
+                                            <b-button type="submit" ref="submitBtn" variant="primary" :disabled="!confirmedPassword">Réinitialiser</b-button>
                                         </b-col>
                                     </b-row>
                                 </b-form>
@@ -66,8 +66,8 @@
 </template>
 <script>
 import { BCard, BForm, BFormGroup, BFormInput, BLink } from 'bootstrap-vue'
-import Footer from './footer.vue'
-import Sidebar from './sidebar.vue'
+import Footer from './partials/footer.vue'
+import Sidebar from './partials/sidebar.vue'
 
 export default{
     components: {
@@ -85,8 +85,40 @@ export default{
         }
     },
     methods: {
-        resetPassword(){
+        resetPassword(event){
+            event.preventDefault()
 
+            // Disable button
+            this.$refs.submitBtn.setAttribute('disabled', true)
+
+            // Dispatch API action
+            this.$store.dispatch('verifyToken', {
+                    email: this.$route.query.email,
+                    token: this.$route.params.token,
+                    password: this.password
+                })
+                .then(response => {
+                    this.$router.replace('/')
+                        .then(() => {
+                            this.$bvToast.toast(response.message, {
+                                title: 'C\'est fait!',
+                                variant: 'success',
+                                solid: true,
+                                autoHideDelay: 5000
+                            })
+                        })
+                })
+                .catch(error => {
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+                .finally(() => {
+                    this.$refs.submitBtn.removeAttribute('disabled')
+                })
         }
     },
     data(){
@@ -94,6 +126,6 @@ export default{
             password: '',
             confirmPassword: '',
         }
-    },
+    }
 }
 </script>

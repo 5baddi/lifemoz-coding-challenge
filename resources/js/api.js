@@ -8,7 +8,7 @@ const api = axios.create({
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest'
     },
-    baseURL: process.env.API_URL
+    baseURL: '/api/'
 })
 
 api.interceptors.response.use(null, error => {

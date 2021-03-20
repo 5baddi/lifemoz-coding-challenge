@@ -13,29 +13,38 @@ const router = new VueRouter({
             path: '/',
             name: 'auth-signin',
             component: () => import('./views/signin.vue'),
+            meta: {
+                redirectIfLoggedIn: true,
+            },
         },
         {
             path: '/signup',
             name: 'auth-signup',
             component: () => import('./views/signup.vue'),
+            meta: {
+                redirectIfLoggedIn: true,
+            },
         },
         {
             path: '/forgot-password',
             name: 'auth-forgot-password',
             component: () => import('./views/forgotPassword.vue'),
+            meta: {
+                redirectIfLoggedIn: true,
+            },
         },
         {
             path: '/reset-password/:token',
             name: 'auth-reset-password',
             component: () => import('./views/resetPassword.vue'),
+            meta: {
+                redirectIfLoggedIn: true,
+            },
         },
         {
             path: '/dashboard',
             name: 'dashboard',
             component: () => import('./views/dashboard.vue'),
-            meta: {
-                authentication: true,
-            },
             children: [
                 
             ]
@@ -49,16 +58,15 @@ const router = new VueRouter({
 })
 
 // Routes authentication middleware
-router.beforeEach((to, _, next) => {
-    if(to.matched.some(route => route.meta.authentication)){
+router.beforeEach((to, from, next) => {
+    if(to.matched.some(route => route.meta.redirectIfLoggedIn)){
         const isLoggedIn = isUserLoggedIn()
-
-        if(!isLoggedIn){
-            next({ name: 'auth-signin' })
+        if(isLoggedIn){
+            next({ name: 'dashboard' })
         }
     }
 
-    return next()
+    next()
 })
 
 export default router

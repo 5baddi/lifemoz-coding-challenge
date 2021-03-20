@@ -38,7 +38,7 @@
 
                                     <b-row align-h="end">
                                         <b-col cols="auto">
-                                            <b-button type="submit" variant="primary" :disabled="!validForm">Se connecter</b-button>
+                                            <b-button type="submit" ref="submitBtn" variant="primary" :disabled="!validForm">Se connecter</b-button>
                                         </b-col>
                                     </b-row>
                                 </b-form>
@@ -60,8 +60,8 @@
 <script>
 import SecureLS from 'secure-ls'
 import { BCard, BForm, BFormGroup, BFormInput, BLink } from 'bootstrap-vue'
-import Footer from './footer.vue'
-import Sidebar from './sidebar.vue'
+import Footer from './partials/footer.vue'
+import Sidebar from './partials/sidebar.vue'
 
 export default{
     components: {
@@ -79,8 +79,41 @@ export default{
         }
     },
     methods: {
-        signIn(){
+        signIn(event){
+            event.preventDefault()
 
+            // Disable button
+            this.$refs.submitBtn.setAttribute('disabled', true)
+
+            // Dispatch API action
+            this.$store.dispatch('signIn', { email: this.email, password: this.password })
+                .then(response => {
+                    // Save to local storage
+                    let ls = new SecureLS()
+                    ls.set('user', response.content.user)
+                    ls.set('token', response.content.token)
+
+                    this.$router.replace('/dashboard')
+                        .then(() => {
+                            this.$bvToast.toast(response.message, {
+                                title: 'C\'est fait!',
+                                variant: 'success',
+                                solid: true,
+                                autoHideDelay: 5000
+                            })
+                        })
+                })
+                .catch(error => {
+                    this.$bvToast.toast(error.response.data.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+                .finally(() => {
+                    this.$refs.submitBtn.removeAttribute('disabled')
+                })
         }
     },
     data(){
@@ -88,12 +121,6 @@ export default{
             email: '',
             password: ''
         }
-    },
-    created(){
-        // Remove old local storage
-        let ls = new SecureLS()
-        ls.remove('user')
-        ls.remove('token')
     }
 }
 </script>

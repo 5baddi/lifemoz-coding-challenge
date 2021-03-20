@@ -7,7 +7,7 @@
                         <Sidebar></Sidebar>
                         <b-col md="8">
                             <b-card-body title="S'inscrire">
-                                <b-form class="mt-3 mb-3">
+                                <b-form @submit="signUp" class="mt-3 mb-3">
                                     <b-form-group
                                         id="fullname-group"
                                         label="Nom complet :"
@@ -72,7 +72,7 @@
 
                                     <b-row align-h="end">
                                         <b-col cols="auto">
-                                            <b-button type="submit" variant="primary" :disabled="!validForm">S'inscrire</b-button>
+                                            <b-button type="submit" ref="submitBtn" variant="primary" :disabled="!validForm">S'inscrire</b-button>
                                         </b-col>
                                     </b-row>
                                 </b-form>
@@ -93,8 +93,8 @@
 </template>
 <script>
 import { BCard, BForm, BFormGroup, BFormInput } from 'bootstrap-vue'
-import Footer from './footer.vue'
-import Sidebar from './sidebar.vue'
+import Footer from './partials/footer.vue'
+import Sidebar from './partials/sidebar.vue'
 
 export default{
     components: {
@@ -111,6 +111,43 @@ export default{
         },
         validForm(){
             return this.email !== '' && this.fullname !== '' && this.password !== '' && this.confirmPassword !== ''
+        }
+    },
+    methods: {
+        signUp(event){
+            event.preventDefault()
+
+            // Disable button
+            this.$refs.submitBtn.setAttribute('disabled', true)
+
+            // Dispatch API action
+            this.$store.dispatch('signUp', {
+                    email: this.email, 
+                    password: this.password,
+                    fullname: this.fullname
+                })
+                .then(response => {
+                    this.$router.replace('/signin')
+                        .then(() => {
+                            this.$bvToast.toast(response.message, {
+                                title: 'C\'est fait!',
+                                variant: 'success',
+                                solid: true,
+                                autoHideDelay: 5000
+                            })
+                        })
+                })
+                .catch(error => {
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+                .finally(() => {
+                    this.$refs.submitBtn.removeAttribute('disabled')
+                })
         }
     },
     data(){

@@ -3,12 +3,10 @@
 namespace App\Services;
 
 use Carbon\Carbon;
-use App\Models\User;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use App\Mail\ResetPasswordMail;
-use Illuminate\Support\Facades\DB;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -63,7 +61,7 @@ class UserService
         $data = $validator->validated();
 
         // Load user
-        $user = User::where('email', $data['email'])->first();
+        $user = $this->userRepository->findWhere(['email' => $data['email']])->first();
 
         // Verify credentials
         if(!$user || !Hash::check($data['password'], $user->password))
@@ -114,7 +112,7 @@ class UserService
         $data = $validator->validated();
 
         // Store user
-        $user = User::create([
+        $user = $this->userRepository->create([
             'name'          => $data['fullname'],
             'email'         => $data['email'],
             'password'      => $data['password'],
@@ -143,7 +141,7 @@ class UserService
             ],
             [
                 'email.required'     =>  __('auth.signup_email_field'),
-                'email.unique'       =>  __('auth.signup_email_exists'),
+                'email.exists'       =>  __('auth.failed'),
             ]
         );
 
@@ -155,21 +153,71 @@ class UserService
         $data = $validator->validated();
 
         // Load user
-        $user = User::where('email', $data['email'])->first();
+        $user = $this->userRepository->findWhere(['email' => $data['email']])->first();
 
         // Generate token
         $token = Str::random(64);
 
         // Save token
-        DB::table('password_resets')->insert([
+        $resetPasswordCreated = $this->userRepository->createResetToken([
             'email' => $user->email, 
             'token' => $token, 
             'created_at' => Carbon::now()
         ]);
 
         // Send reset password mail
-        Mail::to($user->email)->send(new ResetPasswordMail($user, $token));
+        if($resetPasswordCreated){
+            Mail::to($user->email)->send(new ResetPasswordMail($user, $token));
+            return true;
+        }
 
-        return true;
+        return false;
+    }
+
+    /**
+     * Change user password
+     * 
+     * @param array $data user details
+     * @return bool
+     */
+    public function changePassword(array $data) : bool
+    {
+        // Validate data
+        $validator = Validator::make(
+            $data, 
+            [
+                'email'     =>  'required|email|exists:users,email',
+                'token'     =>  'required|string',
+                'password'  =>  'required|string',
+            ],
+            [
+                'email.required'     =>  __('auth.signup_email_field'),
+                'email.exists'       =>  __('auth.failed'),
+                'token.required'     =>  __('auth.signup_fields'),
+                'password.required'  =>  __('auth.signup_password_field'),
+            ]
+        );
+
+        // Break if data not valid
+        if($validator->fails())
+            throw new InvalidArgumentException($validator->errors()->first(), 400);
+
+        // Get validated data
+        $data = $validator->validated();
+
+        // Load token
+        $existsToken = $this->userRepository->getResetToken($data['email'], $data['token']);
+
+        if(is_null($existsToken))
+            throw new InvalidArgumentException(__('auth.invalid_token'), 404);
+
+        // Update password
+        $user = $this->userRepository->findWhere(['email' => $existsToken->email])->first();
+        if($this->userRepository->update($user, ['password' => $data['password']])){
+            $this->userRepository->deleteResetToken($existsToken->email);
+            return true;
+        }
+
+        return false;
     }
 }

@@ -7,7 +7,7 @@
                         <Sidebar></Sidebar>
                         <b-col md="8">
                             <b-card-body title="Mot de passe oublié?">
-                                <b-form method="POST" @submit="sendLink" class="mt-3 mb-3">
+                                <b-form @submit="sendLink" class="mt-3 mb-3">
                                     <b-form-group
                                         id="email-group"
                                         label="Adresse e-mail:"
@@ -44,8 +44,8 @@
 </template>
 <script>
 import { BCard, BForm, BFormGroup, BFormInput, BLink } from 'bootstrap-vue'
-import Footer from './footer.vue'
-import Sidebar from './sidebar.vue'
+import Footer from './partials/footer.vue'
+import Sidebar from './partials/sidebar.vue'
 
 export default{
     components: {
@@ -63,17 +63,35 @@ export default{
         }
     },
     methods: {
-        sendLink(){
+        sendLink(event){
+            event.preventDefault()
+
             // Disable button
             this.$refs.submitBtn.setAttribute('disabled', true)
 
             // Dispatch API action
-            this.$store.dispach('resetPassword', this.email)
+            this.$store.dispatch('resetPassword', this.email)
                 .then(response => {
-                    console.log(resetPassword)
+                    this.$router.replace('/')
+                        .then(() => {
+                            this.$bvToast.toast(response.message, {
+                                title: 'C\'est fait!',
+                                variant: 'success',
+                                solid: true,
+                                autoHideDelay: 5000
+                            })
+                        })
                 })
                 .catch(error => {
-
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+                .finally(() => {
+                    this.$refs.submitBtn.removeAttribute('disabled')
                 })
         }
     },
