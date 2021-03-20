@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function(){
     // Public routes
     Route::post('/signup', [AuthController::class, 'signUp']);
     Route::post('/signin', [AuthController::class, 'signIn']);
+    Route::post('/reset/password', [AuthController::class, 'resetPassword']);
 
     // Private routes
     Route::middleware('auth:sanctum')->group(function(){

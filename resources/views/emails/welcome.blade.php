@@ -79,7 +79,7 @@
 
   <body style="margin: 0; padding: 0; width: 100%; word-break: break-word; -webkit-font-smoothing: antialiased; --bg-opacity: 1; background-color: #eceff1; background-color: rgba(236, 239, 241, var(--bg-opacity));">
     <div style="display: none;">{{ __('auth.welcome_mail') }}</div>
-    <div role="article" aria-roledescription="email" aria-label="Verify Email Address" lang="en">
+    <div role="article" aria-roledescription="email" aria-label="{{ __('auth.welcome_mail') }}" lang="en">
       <table style="font-family: Montserrat, -apple-system, 'Segoe UI', sans-serif; width: 100%;" width="100%" cellpadding="0" cellspacing="0" role="presentation">
         <tr>
           <td align="center" style="--bg-opacity: 1; background-color: #eceff1; background-color: rgba(236, 239, 241, var(--bg-opacity)); font-family: Montserrat, -apple-system, 'Segoe UI', sans-serif;" bgcolor="rgba(236, 239, 241, var(--bg-opacity))">

@@ -7,7 +7,7 @@
                         <Sidebar></Sidebar>
                         <b-col md="8">
                             <b-card-body title="Mot de passe oublié?">
-                                <b-form @submit="sendLink" class="mt-3 mb-3">
+                                <b-form method="POST" @submit="sendLink" class="mt-3 mb-3">
                                     <b-form-group
                                         id="email-group"
                                         label="Adresse e-mail:"
@@ -23,7 +23,7 @@
 
                                     <b-row align-h="end">
                                         <b-col cols="auto">
-                                            <b-button type="submit" variant="primary" :disabled="!validForm">Envoyer le lien de réinitialisation</b-button>
+                                            <b-button type="submit" ref="submitBtn" variant="primary" :disabled="!validForm">Envoyer le lien de réinitialisation</b-button>
                                         </b-col>
                                     </b-row>
                                 </b-form>
@@ -64,7 +64,17 @@ export default{
     },
     methods: {
         sendLink(){
+            // Disable button
+            this.$refs.submitBtn.setAttribute('disabled', true)
 
+            // Dispatch API action
+            this.$store.dispach('resetPassword', this.email)
+                .then(response => {
+                    console.log(resetPassword)
+                })
+                .catch(error => {
+
+                })
         }
     },
     data(){

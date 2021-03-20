@@ -25,4 +25,8 @@ return [
     'signup_email_exists'   =>  'Email déjà enregistré avec un autre compte',
     'welcome_mail'          =>  'Bienvenue sur notre plateforme!',
     'signup_thanks'         =>  'Merci pour votre inscription!',
+    'account_notexists'     =>  'Cet e-mail ne correspond pas à nos enregistrements.',
+    'reset_password_mail'   =>  'Réinitialiser votre mot de passe',
+    'reset_password'        =>  'Réinitialiser',
+    'reset_password_sent'   =>  'Nous avons envoyé votre lien de réinitialisation de mot de passe par e-mail!',
 ];

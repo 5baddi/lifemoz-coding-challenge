@@ -2,9 +2,13 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Mail\WelcomeMail;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
+use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -121,5 +125,51 @@ class UserService
         Mail::to($user->email)->send(new WelcomeMail($user));
 
         return new UserResource($user);
+    }
+
+    /**
+     * Reset user password
+     * 
+     * @param array $data user details
+     * @return bool
+     */
+    public function resetPassword(array $data) : bool
+    {
+        // Validate data
+        $validator = Validator::make(
+            $data, 
+            [
+                'email'     =>  'required|email|exists:users,email',
+            ],
+            [
+                'email.required'     =>  __('auth.signup_email_field'),
+                'email.unique'       =>  __('auth.signup_email_exists'),
+            ]
+        );
+
+        // Break if data not valid
+        if($validator->fails())
+            throw new InvalidArgumentException($validator->errors()->first(), 400);
+
+        // Get validated data
+        $data = $validator->validated();
+
+        // Load user
+        $user = User::where('email', $data['email'])->first();
+
+        // Generate token
+        $token = Str::random(64);
+
+        // Save token
+        DB::table('password_resets')->insert([
+            'email' => $user->email, 
+            'token' => $token, 
+            'created_at' => Carbon::now()
+        ]);
+
+        // Send reset password mail
+        Mail::to($user->email)->send(new ResetPasswordMail($user, $token));
+
+        return true;
     }
 }

@@ -105,7 +105,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    sendLink: function sendLink() {}
+    sendLink: function sendLink() {
+      // Disable button
+      this.$refs.submitBtn.setAttribute('disabled', true); // Dispatch API action
+
+      this.$store.dispach('resetPassword', this.email).then(function (response) {
+        console.log(resetPassword);
+      })["catch"](function (error) {});
+    }
   },
   data: function data() {
     return {
@@ -455,6 +462,7 @@ var render = function() {
                                 "b-form",
                                 {
                                   staticClass: "mt-3 mb-3",
+                                  attrs: { method: "POST" },
                                   on: { submit: _vm.sendLink }
                                 },
                                 [
@@ -498,6 +506,7 @@ var render = function() {
                                           _c(
                                             "b-button",
                                             {
+                                              ref: "submitBtn",
                                               attrs: {
                                                 type: "submit",
                                                 variant: "primary",

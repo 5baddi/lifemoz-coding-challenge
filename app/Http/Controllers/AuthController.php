@@ -87,6 +87,35 @@ class AuthController extends Controller
             );
         }
     }
+    
+    /**
+     * Reset password
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function resetPassword(Request $request)
+    {
+        try{
+            // Send reset password mail
+            $passwordReseted = $this->userService->resetPassword($request->input());
+
+            if($passwordReseted)
+                return response()->success(__('auth.reset_password_sent'));
+        }catch(InvalidArgumentException $ex){
+            return response()->error(
+                __('auth.signup_fields'),
+                [$ex->getMessage()],
+                $ex->getCode()
+            );
+        }catch(Exception $ex){
+            return response()->error(
+                __('messages.error'),
+                [$ex->getMessage()],
+                500
+            );
+        }
+    }
 
     /**
      * Sign out

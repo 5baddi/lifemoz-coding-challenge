@@ -23,7 +23,15 @@ const mutations = {
 
 // Actions
 const actions = {
-
+    resetPassword({ commit, state}, data){
+        return new Promise((resolve, reject) => {
+            api.post("v1/reset/password", { email: data })
+            .then(response => {
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
 }
 
 export default new Vuex.Store({
