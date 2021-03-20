@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 // version 1 of auth module routes
 Route::prefix('v1')->group(function(){
     // Public routes
-    Route::post('/signup', [AuthController::class, 'singUp']);
+    Route::post('/signup', [AuthController::class, 'signUp']);
     Route::post('/signin', [AuthController::class, 'signIn']);
 
     // Private routes
