@@ -87,7 +87,7 @@
               <tr>
                 <td class="sm-py-32 sm-px-24" style="font-family: Montserrat, -apple-system, 'Segoe UI', sans-serif; padding: 48px; text-align: center;" align="center">
                   <a href="{{ url('/') }}">
-                    <img src="{{ asset('images/logo/mini-logo.png') }}" width="155" alt="{{ env('APP_NAME') }}" style="border: 0; max-width: 100%; line-height: 100%; vertical-align: middle;">
+                    <img src="{{ asset('img/logo.png') }}" width="155" alt="{{ env('APP_NAME') }}" style="border: 0; max-width: 100%; line-height: 100%; vertical-align: middle;">
                   </a>
                 </td>
               </tr>
@@ -129,8 +129,8 @@
                       <td style="font-family: Montserrat, -apple-system, 'Segoe UI', sans-serif; font-size: 12px; padding-left: 48px; padding-right: 48px; --text-opacity: 1; color: #eceff1; color: rgba(236, 239, 241, var(--text-opacity));">
                         <p style="--text-opacity: 1; color: #263238; color: rgba(38, 50, 56, var(--text-opacity));">
                           {{ __('messages.privacy_message') }}
-                          <a href="#" class="hover-underline" style="--text-opacity: 1; color: #7367f0; color: rgba(115, 103, 240, var(--text-opacity)); text-decoration: none;">{{ __('messages.terms') }}</a> {{ __('messages.and') }}
-                          <a href="#" class="hover-underline" style="--text-opacity: 1; color: #7367f0; color: rgba(115, 103, 240, var(--text-opacity)); text-decoration: none;">{{ __('messages.privacy') }}</a>.
+                          <a href="{{ url('/') }}" class="hover-underline" style="--text-opacity: 1; color: #7367f0; color: rgba(115, 103, 240, var(--text-opacity)); text-decoration: none;">{{ __('messages.terms') }}</a> {{ __('messages.and') }}
+                          <a href="{{ url('/') }}" class="hover-underline" style="--text-opacity: 1; color: #7367f0; color: rgba(115, 103, 240, var(--text-opacity)); text-decoration: none;">{{ __('messages.privacy') }}</a>.
                         </p>
                       </td>
                     </tr>
