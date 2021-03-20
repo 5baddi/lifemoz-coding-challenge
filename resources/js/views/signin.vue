@@ -35,7 +35,7 @@
                                         required>
                                         </b-form-input>
 
-                                        <b-link href="#" class="text-sm">Mot de passe oublié?</b-link>
+                                        <b-link :to="{ name: 'auth-forgot-password' }" class="text-sm">Mot de passe oublié?</b-link>
                                     </b-form-group>
 
                                     <b-row align-h="end">
@@ -47,7 +47,7 @@
 
                                 <b-row align-h="center">
                                     <b-col cols="auto">
-                                        <b-text>Nouveau sur notre plateforme? <b-link href="#">Créer un compte</b-link></b-text>
+                                        Nouveau sur notre plateforme? <b-link :to="{ name: 'auth-signup' }">Créer un compte</b-link>
                                     </b-col>
                                 </b-row>
                             </b-card-body>
@@ -59,7 +59,8 @@
     </b-container>
 </template>
 <script>
-import { BCard, BForm, BFormGroup, BFormInput, BText, BLink } from 'bootstrap-vue'
+import SecureLS from 'secure-ls'
+import { BCard, BForm, BFormGroup, BFormInput, BLink } from 'bootstrap-vue'
 
 export default{
     components: {
@@ -67,7 +68,6 @@ export default{
         BForm,
         BFormGroup,
         BFormInput,
-        BText,
         BLink,
     },
     computed: {
@@ -86,5 +86,11 @@ export default{
             password: ''
         }
     },
+    created(){
+        // Remove old local storage
+        let ls = new SecureLS()
+        ls.remove('user')
+        ls.remove('token')
+    }
 };
 </script>

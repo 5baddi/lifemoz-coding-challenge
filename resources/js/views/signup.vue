@@ -75,7 +75,7 @@
 
                                 <b-row align-h="center">
                                     <b-col cols="auto">
-                                        <b-text>Vous avez déjà un compte? <b-link href="#">Connectez-vous</b-link></b-text>
+                                        Vous avez déjà un compte? <b-link href="#">Connectez-vous</b-link>
                                     </b-col>
                                 </b-row>
                             </b-card-body>

@@ -1,3 +1,5 @@
+import SecureLS from 'secure-ls';
+
 window._ = require('lodash');
 
 /**
@@ -26,3 +28,10 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+// Set Authorization header
+let ls = new SecureLS();
+let token = ls.get('token');
+if(token && token !== ''){
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
