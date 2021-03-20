@@ -4,9 +4,7 @@
             <b-col md="6">
                 <b-card no-body class="overflow-hidden">
                     <b-row no-gutters>
-                        <b-col md="4">
-                            <b-card-img src="./img/one.jpg" alt="Image" class="rounded-0"></b-card-img>
-                        </b-col>
+                        <Sidebar></Sidebar>
                         <b-col md="8">
                             <b-card-body title="S'inscrire">
                                 <b-form class="mt-3 mb-3">
@@ -71,34 +69,48 @@
                                             Le mot de passe de confirmation ne correspond pas au mot de passe.
                                         </b-form-invalid-feedback>
                                     </b-form-group>
+
+                                    <b-row align-h="end">
+                                        <b-col cols="auto">
+                                            <b-button type="submit" variant="primary" :disabled="!validForm">S'inscrire</b-button>
+                                        </b-col>
+                                    </b-row>
                                 </b-form>
 
                                 <b-row align-h="center">
                                     <b-col cols="auto">
-                                        Vous avez déjà un compte? <b-link href="#">Connectez-vous</b-link>
+                                        Vous avez déjà un compte? <b-link :to="{ name: 'auth-signin' }">Connectez-vous</b-link>
                                     </b-col>
                                 </b-row>
                             </b-card-body>
                         </b-col>
                     </b-row>
                 </b-card>
+                <Footer></Footer>
             </b-col>
         </b-row>
     </b-container>
 </template>
 <script>
 import { BCard, BForm, BFormGroup, BFormInput } from 'bootstrap-vue'
+import Footer from './footer.vue'
+import Sidebar from './sidebar.vue'
 
 export default{
     components: {
         BCard,
         BForm,
         BFormGroup,
-        BFormInput
+        BFormInput,
+        Footer,
+        Sidebar,
     },
     computed: {
         confirmedPassword(){
-            return this.password === this.confirmedPassword
+            return this.password === this.confirmPassword && this.password !== ''
+        },
+        validForm(){
+            return this.email !== '' && this.fullname !== '' && this.password !== '' && this.confirmPassword !== ''
         }
     },
     data(){
@@ -109,5 +121,5 @@ export default{
             confirmPassword: ''
         }
     }
-};
+}
 </script>

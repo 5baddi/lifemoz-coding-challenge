@@ -11,7 +11,7 @@
     </head>
     <body>
         <div id="app">
-            <signin></signin>
+            <App></App>
         </div>
 
         <script src="{{ mix('js/app.js') }}"></script>

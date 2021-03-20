@@ -70,7 +70,26 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_vm._v("Page non trouvée!")])
+  return _c(
+    "b-container",
+    { attrs: { fluid: "" } },
+    [
+      _c(
+        "b-row",
+        {
+          staticClass: "main-card",
+          attrs: { "align-v": "center", "align-h": "center" }
+        },
+        [
+          _c("b-col", { staticClass: "text-center", attrs: { cols: "12" } }, [
+            _c("h1", [_vm._v("Page non trouvée!")])
+          ])
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

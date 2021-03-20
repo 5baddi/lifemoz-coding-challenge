@@ -14,7 +14,7 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
 
 // Pages components
-import Signin from './views/signin.vue'
+import App from './app.vue'
 
 // Register dependencies
 Vue.use(BootstrapVue)
@@ -34,7 +34,7 @@ Vue.config.productionTip = false
 // Init app
 const app = new Vue({
     el: '#app',
-    components: { Signin },
+    components: { App },
     router,
     store
 })

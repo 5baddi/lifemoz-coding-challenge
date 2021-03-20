@@ -25,6 +25,11 @@ const router = new VueRouter({
             component: () => import('./views/forgotPassword.vue'),
         },
         {
+            path: '/reset-password/:token',
+            name: 'auth-reset-password',
+            component: () => import('./views/resetPassword.vue'),
+        },
+        {
             path: '/dashboard',
             name: 'dashboard',
             component: () => import('./views/dashboard.vue'),
@@ -32,12 +37,13 @@ const router = new VueRouter({
                 authentication: true,
             },
             children: [
-                {
-                    path: '*',
-                    name: 'notfound',
-                    component: () => import('./views/notfound.vue'),
-                },
+                
             ]
+        },
+        {
+            path: '*',
+            name: 'notfound',
+            component: () => import('./views/notfound.vue'),
         },
     ],
 })

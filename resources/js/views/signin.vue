@@ -4,9 +4,7 @@
             <b-col md="6">
                 <b-card no-body class="overflow-hidden">
                     <b-row no-gutters>
-                        <b-col md="4">
-                            <b-card-img src="./img/one.jpg" alt="Image" class="rounded-0 card-img"></b-card-img>
-                        </b-col>
+                        <Sidebar></Sidebar>
                         <b-col md="8">
                             <b-card-body title="S'identifier">
                                 <b-form @submit="signIn" class="mt-3 mb-3">
@@ -54,6 +52,7 @@
                         </b-col>
                     </b-row>
                 </b-card>
+                <Footer></Footer>
             </b-col>
         </b-row>
     </b-container>
@@ -61,6 +60,8 @@
 <script>
 import SecureLS from 'secure-ls'
 import { BCard, BForm, BFormGroup, BFormInput, BLink } from 'bootstrap-vue'
+import Footer from './footer.vue'
+import Sidebar from './sidebar.vue'
 
 export default{
     components: {
@@ -69,10 +70,12 @@ export default{
         BFormGroup,
         BFormInput,
         BLink,
+        Footer,
+        Sidebar,
     },
     computed: {
         validForm(){
-            return this.email !== '' && this.password !== '';
+            return this.email !== '' && this.password !== ''
         }
     },
     methods: {
@@ -92,5 +95,5 @@ export default{
         ls.remove('user')
         ls.remove('token')
     }
-};
+}
 </script>
