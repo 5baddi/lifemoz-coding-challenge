@@ -15,6 +15,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _partials_sidebar_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./partials/sidebar.vue */ "./resources/js/views/partials/sidebar.vue");
 /* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../auth */ "./resources/js/auth.js");
 /* harmony import */ var bootstrap_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! bootstrap-vue */ "./node_modules/bootstrap-vue/esm/index.js");
+/* harmony import */ var secure_ls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! secure-ls */ "./node_modules/secure-ls/dist/secure-ls.js");
+/* harmony import */ var secure_ls__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(secure_ls__WEBPACK_IMPORTED_MODULE_4__);
 //
 //
 //
@@ -35,10 +37,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
+
 
 
 
@@ -49,6 +48,19 @@ __webpack_require__.r(__webpack_exports__);
     Footer: _partials_footer_vue__WEBPACK_IMPORTED_MODULE_0__.default,
     Sidebar: _partials_sidebar_vue__WEBPACK_IMPORTED_MODULE_1__.default,
     BNav: bootstrap_vue__WEBPACK_IMPORTED_MODULE_3__.BNav
+  },
+  methods: {
+    logout: function logout() {
+      var _this = this;
+
+      this.$store.dispatch('signOut').then(function (response) {
+        var ls = new (secure_ls__WEBPACK_IMPORTED_MODULE_4___default())();
+        ls.remove('user');
+        ls.remove('token');
+
+        _this.$router.replace('/');
+      });
+    }
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
     var isLoggedIn = (0,_auth__WEBPACK_IMPORTED_MODULE_2__.isUserLoggedIn)();
@@ -361,92 +373,78 @@ var render = function() {
         [
           _c(
             "b-col",
-            { attrs: { md: "8" } },
+            { attrs: { md: "10" } },
             [
               _c(
                 "b-card",
-                { staticClass: "overflow-hidden", attrs: { "no-body": "" } },
+                {
+                  staticClass: "overflow-hidden",
+                  staticStyle: { "min-height": "50vh" },
+                  attrs: { "no-body": "" }
+                },
                 [
                   _c(
-                    "b-row",
-                    { attrs: { "no-gutters": "" } },
+                    "b-card-body",
                     [
-                      _c("Sidebar"),
-                      _vm._v(" "),
                       _c(
-                        "b-col",
-                        { attrs: { md: "8" } },
+                        "b-nav",
+                        { attrs: { tabs: "", fill: "" } },
                         [
                           _c(
-                            "b-card-body",
-                            [
-                              _c(
-                                "b-nav",
-                                { attrs: { tabs: "", fill: "" } },
-                                [
-                                  _c(
-                                    "b-nav-item",
-                                    {
-                                      attrs: {
-                                        active: _vm.active === "dashboard"
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          _vm.active = "dashboard"
-                                        }
-                                      }
-                                    },
-                                    [_vm._v("Dashboard")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "b-nav-item",
-                                    {
-                                      attrs: { active: _vm.active === "rooms" },
-                                      on: {
-                                        click: function($event) {
-                                          _vm.active = "rooms"
-                                        }
-                                      }
-                                    },
-                                    [_vm._v("Add new room")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "b-nav-item",
-                                    {
-                                      attrs: {
-                                        active: _vm.active === "rservations"
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          _vm.active = "rservations"
-                                        }
-                                      }
-                                    },
-                                    [_vm._v("Set reservation")]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "b-nav-item",
-                                    {
-                                      attrs: {
-                                        active: _vm.active === "profile"
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          _vm.active = "profile"
-                                        }
-                                      }
-                                    },
-                                    [_vm._v("Update profile")]
-                                  )
-                                ],
-                                1
-                              )
-                            ],
-                            1
-                          )
+                            "b-nav-item",
+                            {
+                              attrs: { active: _vm.active === "dashboard" },
+                              on: {
+                                click: function($event) {
+                                  _vm.active = "dashboard"
+                                }
+                              }
+                            },
+                            [_vm._v("Dashboard")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-nav-item",
+                            {
+                              attrs: { active: _vm.active === "rooms" },
+                              on: {
+                                click: function($event) {
+                                  _vm.active = "rooms"
+                                }
+                              }
+                            },
+                            [_vm._v("Add new room")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-nav-item",
+                            {
+                              attrs: { active: _vm.active === "rservations" },
+                              on: {
+                                click: function($event) {
+                                  _vm.active = "rservations"
+                                }
+                              }
+                            },
+                            [_vm._v("Set reservation")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "b-nav-item",
+                            {
+                              attrs: { active: _vm.active === "profile" },
+                              on: {
+                                click: function($event) {
+                                  _vm.active = "profile"
+                                }
+                              }
+                            },
+                            [_vm._v("Update profile")]
+                          ),
+                          _vm._v(" "),
+                          _c("b-nav-item", { on: { click: _vm.logout } }, [
+                            _vm._v("Logout")
+                          ])
                         ],
                         1
                       )

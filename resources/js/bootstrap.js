@@ -33,5 +33,5 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 let ls = new SecureLS();
 let token = ls.get('token');
 if(token && token !== ''){
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 }

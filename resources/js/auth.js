@@ -13,7 +13,7 @@ export const isUserLoggedIn = () => {
  * Return authenticated user
  */
 export const getUser = () => {
-  if(typeof ls.get('user') !== 'undefined' && ls.get('user') !== ''){
+  if(isUserLoggedIn()){
     return ls.get('user')
   }
 

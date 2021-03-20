@@ -72,6 +72,15 @@ const actions = {
             .catch(error => reject(error))
         })
     },
+    signOut({ commit, state}){
+        return new Promise((resolve, reject) => {
+            api.post("v1/signout")
+            .then(response => {
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
 }
 
 export default new Vuex.Store({
