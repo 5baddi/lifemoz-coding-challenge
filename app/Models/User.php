@@ -70,4 +70,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Room::class);
     }
+
+    /**
+     * Get reservations
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }

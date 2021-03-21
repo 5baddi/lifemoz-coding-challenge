@@ -50,10 +50,11 @@ class RoomService
         $validator = Validator::make(
             $data, 
             [
-                'name'  =>  'required|string',
+                'name'  =>  'required|string|unique:rooms,name',
             ],
             [
                 'name.required'  =>  __('messages.room_name'),
+                'name.unique'    =>  __('messages.room_name_exists'),
             ]
         );
 

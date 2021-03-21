@@ -12,4 +12,5 @@ return [
     'room_created'      =>  'Chambre créée avec succès.',
     'room_name'         =>  'Nom de la chambre requis!',
     'rooms_fetched'     =>  'Toutes les chambres ont été récupérées avec succès.',
+    'room_name_exists'  =>  'Nom de la chambre déjà enregistré',
 ];
