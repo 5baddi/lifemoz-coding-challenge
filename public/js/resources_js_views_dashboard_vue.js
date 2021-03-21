@@ -158,6 +158,9 @@ __webpack_require__.r(__webpack_exports__);
     user: function user() {
       return this.$store.state.user;
     },
+    rooms: function rooms() {
+      return this.$store.state.rooms;
+    },
     validRoomForm: function validRoomForm() {
       return this.room !== '';
     },
@@ -189,24 +192,16 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     addRoom: function addRoom(event) {
-      event.preventDefault();
-    },
-    updateProfile: function updateProfile(event) {
       var _this2 = this;
 
       event.preventDefault(); // Disable button
 
-      this.$refs.updateProfileBtn.setAttribute('disabled', true); // Dispatch API action
+      this.$refs.submitRoomBtn.setAttribute('disabled', true); // Dispatch API action
 
-      this.$store.dispatch('updateProfile', {
-        uuid: this.user.uuid,
-        email: this.user.email,
-        password: this.user.password,
-        fullname: this.user.name
+      this.$store.dispatch('addRoom', {
+        name: this.room
       }).then(function (response) {
-        // Update local storage
-        var ls = new (secure_ls__WEBPACK_IMPORTED_MODULE_4___default())();
-        ls.set('user', response.content);
+        _this2.room = '';
 
         _this2.$bvToast.toast(response.message, {
           title: 'C\'est fait!',
@@ -222,7 +217,54 @@ __webpack_require__.r(__webpack_exports__);
           autoHideDelay: 5000
         });
       })["finally"](function () {
-        _this2.$refs.updateProfileBtn.removeAttribute('disabled');
+        _this2.$refs.submitRoomBtn.removeAttribute('disabled');
+      });
+    },
+    loadRooms: function loadRooms() {
+      var _this3 = this;
+
+      // Dispatch API action
+      this.$store.dispatch('fetchRooms')["catch"](function (error) {
+        _this3.$bvToast.toast(error.message, {
+          title: 'Quelque chose ne va pas!',
+          variant: 'warning',
+          solid: true,
+          autoHideDelay: 5000
+        });
+      });
+    },
+    updateProfile: function updateProfile(event) {
+      var _this4 = this;
+
+      event.preventDefault(); // Disable button
+
+      this.$refs.updateProfileBtn.setAttribute('disabled', true); // Dispatch API action
+
+      this.$store.dispatch('updateProfile', {
+        uuid: this.user.uuid,
+        email: this.user.email,
+        password: this.user.password,
+        fullname: this.user.name
+      }).then(function (response) {
+        // Update local storage
+        var ls = new (secure_ls__WEBPACK_IMPORTED_MODULE_4___default())();
+        ls.set('user', response.content);
+
+        _this4.$bvToast.toast(response.message, {
+          title: 'C\'est fait!',
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 5000
+        });
+      })["catch"](function (error) {
+        _this4.$bvToast.toast(error.message, {
+          title: 'Quelque chose ne va pas!',
+          variant: 'warning',
+          solid: true,
+          autoHideDelay: 5000
+        });
+      })["finally"](function () {
+        _this4.$refs.updateProfileBtn.removeAttribute('disabled');
       });
     }
   },
@@ -237,18 +279,25 @@ __webpack_require__.r(__webpack_exports__);
 
     next();
   },
-  mounted: function mounted() {// Load user
-    //if(typeof this.user === "undefined" || this.user === null || Object.values(this.user).length === 0)
-    //this.loadStatistics();
+  mounted: function mounted() {
+    // Load rooms
+    if (typeof this.rooms === "undefined" || this.rooms === null || Object.values(this.rooms).length === 0) this.loadRooms();
   },
   data: function data() {
     return {
       active: 'dashboard',
       room: '',
-      rooms: [],
       roomFields: [{
         key: 'name',
         label: 'Nom',
+        sortable: true
+      }, {
+        key: 'user.name',
+        label: 'User',
+        sortable: true
+      }, {
+        key: 'created_at',
+        label: 'Créé à',
         sortable: true
       }],
       confirmPassword: null
@@ -611,7 +660,8 @@ var render = function() {
                                             {
                                               attrs: {
                                                 id: "room-group",
-                                                label: "Nom:",
+                                                label:
+                                                  "Numéro ou nom de la chambre:",
                                                 "label-for": "room"
                                               }
                                             },
@@ -620,7 +670,8 @@ var render = function() {
                                                 attrs: {
                                                   id: "room",
                                                   type: "text",
-                                                  placeholder: "Entrer le nom",
+                                                  placeholder:
+                                                    "Entrer numéro ou nom",
                                                   required: ""
                                                 },
                                                 model: {

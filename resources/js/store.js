@@ -9,13 +9,15 @@ Vue.use(Vuex)
 // State
 const state = () => ({
     user: getUser(),
-    token: null
+    token: null,
+    rooms: [],
 })
 
 // Getters
 const getters = {
     user: state => state.user,
     token: state => state.token,
+    rooms: state => state.rooms,
 }
 
 // Mutations
@@ -25,6 +27,9 @@ const mutations = {
     },
     setToken: (state, token) => {
         state.token = token
+    },
+    setRooms: (state, rooms) => {
+        state.rooms = rooms
     }
 }
 
@@ -87,6 +92,30 @@ const actions = {
             .then(response => {
                 // Commit to state
                 commit('setUser', response.content)
+
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
+    addRoom({ commit, state, dispatch}, data){
+        return new Promise((resolve, reject) => {
+            api.post("v1/rooms", data)
+            .then(response => {
+                // Dispatch action
+                dispatch('fetchRooms')
+
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
+    fetchRooms({ commit, state}, data){
+        return new Promise((resolve, reject) => {
+            api.get("v1/rooms", data)
+            .then(response => {
+                // Commit state
+                commit('setRooms', response.data.content)
 
                 resolve(response.data)
             })

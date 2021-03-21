@@ -60,4 +60,14 @@ class User extends Authenticatable
 
         return $this;
     }
+
+    /**
+     * Get rooms
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
 }

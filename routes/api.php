@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 // version 1 of auth module routes
 Route::prefix('v1')->group(function(){
-    // Public routes
+    // Auth routes
     Route::post('/signup', [AuthController::class, 'signUp']);
     Route::post('/signin', [AuthController::class, 'signIn']);
     Route::post('/reset/password', [AuthController::class, 'resetPassword']);
@@ -25,7 +26,12 @@ Route::prefix('v1')->group(function(){
 
     // Private routes
     Route::middleware('auth:sanctum')->group(function(){
+        // User routes
         Route::post('/signout', [AuthController::class, 'signOut']);
         Route::put('/{user}/profile/', [UserController::class, 'updateProfile']);
+
+        // Room routes
+        Route::get('/rooms', [RoomController::class, 'index']);
+        Route::post('/rooms', [RoomController::class, 'store']);
     });
 });

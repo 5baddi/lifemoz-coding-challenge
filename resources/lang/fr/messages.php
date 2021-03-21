@@ -8,5 +8,8 @@ return [
     'terms'     =>  'Conditions d\'utilisation',
     'privacy'   =>  'Politique de confidentialité',
     'and'       =>  'et',
-    'privacy_message'   =>  'L\'utilisation de notre service et de notre site Web est soumise à notre'
+    'privacy_message'   =>  'L\'utilisation de notre service et de notre site Web est soumise à notre',
+    'room_created'      =>  'Chambre créée avec succès.',
+    'room_name'         =>  'Nom de la chambre requis!',
+    'rooms_fetched'     =>  'Toutes les chambres ont été récupérées avec succès.',
 ];

@@ -26,6 +26,16 @@ class Room extends Model
      * @var array
      */
     protected $casts = [
-        'user_id' => 'unsignedInteger',
+        'user_id' => 'integer',
     ];
+
+    /**
+     * Get user
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

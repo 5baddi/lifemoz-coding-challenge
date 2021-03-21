@@ -14,13 +14,13 @@
                                         <b-form @submit="addRoom" class="mt-3 mb-3">
                                             <b-form-group
                                                 id="room-group"
-                                                label="Nom:"
+                                                label="Numéro ou nom de la chambre:"
                                                 label-for="room">
                                                 <b-form-input
                                                 id="room"
                                                 v-model="room"
                                                 type="text"
-                                                placeholder="Entrer le nom"
+                                                placeholder="Entrer numéro ou nom"
                                                 required>
                                                 </b-form-input>
                                             </b-form-group>
@@ -141,6 +141,9 @@ export default{
         user(){
             return this.$store.state.user
         },
+        rooms(){
+            return this.$store.state.rooms
+        },
         validRoomForm(){
             return this.room !== '';
         },
@@ -175,6 +178,47 @@ export default{
         },
         addRoom(event){
             event.preventDefault()
+
+            // Disable button
+            this.$refs.submitRoomBtn.setAttribute('disabled', true)
+
+            // Dispatch API action
+            this.$store.dispatch('addRoom', {
+                    name: this.room,
+                })
+                .then(response => {
+                    this.room = ''
+
+                    this.$bvToast.toast(response.message, {
+                        title: 'C\'est fait!',
+                        variant: 'success',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+                .catch(error => {
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+                .finally(() => {
+                    this.$refs.submitRoomBtn.removeAttribute('disabled')
+                })
+        },
+        loadRooms(){
+            // Dispatch API action
+            this.$store.dispatch('fetchRooms')
+                .catch(error => {
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
         },
         updateProfile(event){
             event.preventDefault()
@@ -223,19 +267,28 @@ export default{
         next()
     },
     mounted(){
-        // Load user
-        //if(typeof this.user === "undefined" || this.user === null || Object.values(this.user).length === 0)
-        //this.loadStatistics();
+        // Load rooms
+        if(typeof this.rooms === "undefined" || this.rooms === null || Object.values(this.rooms).length === 0)
+            this.loadRooms();
     },
     data(){
         return {
             active: 'dashboard',
             room: '',
-            rooms: [],
             roomFields: [
                 {
                     key: 'name',
                     label: 'Nom',
+                    sortable: true
+                },
+                {
+                    key: 'user.name',
+                    label: 'User',
+                    sortable: true
+                },
+                {
+                    key: 'created_at',
+                    label: 'Créé à',
                     sortable: true
                 },
             ],
