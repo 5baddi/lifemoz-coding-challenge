@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -154,6 +155,8 @@ class UserService
 
         // Load user
         $user = $this->userRepository->findWhere(['email' => $data['email']])->first();
+        if(is_null($user))
+            throw new InvalidArgumentException(__('auth.failed'), 404);
 
         // Generate token
         $token = Str::random(64);
@@ -217,6 +220,54 @@ class UserService
             $this->userRepository->deleteResetToken($existsToken->email);
             return true;
         }
+
+        return false;
+    }
+
+    /**
+     * Update profile
+     * 
+     * @param \App\Models\User $user User entity
+     * @param array $data User details
+     * @return \App\Http\Resources\UserResource|bool
+     */
+    public function updateProfile(User $user, array $data) : UserResource
+    {
+        // Validate data
+        $validator = Validator::make(
+            $data, 
+            [
+                'fullname'  =>  'required|string',
+                'email'     =>  'required|email',
+                'password'  =>  'nullable|string',
+                'timezone'  =>  'nullable|string',
+            ],
+            [
+                'fullname.required'  =>  __('auth.signup_fullname_field'),
+                'email.required'     =>  __('auth.signup_email_field'),
+                'password.required'  =>  __('auth.signup_password_field'),
+            ]
+        );
+
+        // Break if data not valid
+        if($validator->fails())
+            throw new InvalidArgumentException($validator->errors()->first(), 400);
+
+        // Get validated data
+        $data = $validator->validated();
+        $profile = [
+            'name'          => $data['fullname'],
+            'email'         => $data['email'],
+            'timezone'      => $data['timezone'] ?? config('app.timezone'),
+        ];
+        if(isset($data['password']))
+            $profile['password'] = $data['password'];
+
+        // Update user
+        $userUpdated = $this->userRepository->update($user, $profile);
+
+        if($userUpdated)
+            return new UserResource($user->refresh());
 
         return false;
     }

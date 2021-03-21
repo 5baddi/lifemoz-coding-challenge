@@ -81,6 +81,18 @@ const actions = {
             .catch(error => reject(error))
         })
     },
+    updateProfile({ commit, state}, data){
+        return new Promise((resolve, reject) => {
+            api.put(`v1/${data.uuid}/profile`, data)
+            .then(response => {
+                // Commit to state
+                commit('setUser', response.content)
+
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
 }
 
 export default new Vuex.Store({

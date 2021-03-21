@@ -29,5 +29,6 @@ return [
     'reset_password'        =>  'Réinitialiser',
     'reset_password_sent'   =>  'Nous avons envoyé votre lien de réinitialisation de mot de passe par e-mail!',
     'password_updated'      =>  'Le mot de passe a été mis à jour avec succès! Vous pouvez vous connecter maintenant',
+    'profile_updated'      =>  'Le profil a été mis à jour avec succès!',
     'invalid_token'         =>  'Jeton invalide!'
 ];

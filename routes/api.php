@@ -26,6 +26,6 @@ Route::prefix('v1')->group(function(){
     // Private routes
     Route::middleware('auth:sanctum')->group(function(){
         Route::post('/signout', [AuthController::class, 'signOut']);
-        Route::post('/{user}/profile/', [UserController::class, 'updateProfile']);
+        Route::put('/{user}/profile/', [UserController::class, 'updateProfile']);
     });
 });

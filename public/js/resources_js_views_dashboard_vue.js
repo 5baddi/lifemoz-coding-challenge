@@ -71,6 +71,76 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -85,8 +155,18 @@ __webpack_require__.r(__webpack_exports__);
     BTable: bootstrap_vue__WEBPACK_IMPORTED_MODULE_3__.BTable
   },
   computed: {
+    user: function user() {
+      return this.$store.state.user;
+    },
     validRoomForm: function validRoomForm() {
       return this.room !== '';
+    },
+    confirmedPassword: function confirmedPassword() {
+      if (!this.user.password || this.user.password == '') return true;
+      return this.user.password === this.confirmPassword;
+    },
+    validProfileForm: function validProfileForm() {
+      return this.user.email !== '' && this.user.name !== '' && this.user.password == this.confirmPassword;
     }
   },
   methods: {
@@ -110,6 +190,40 @@ __webpack_require__.r(__webpack_exports__);
     },
     addRoom: function addRoom(event) {
       event.preventDefault();
+    },
+    updateProfile: function updateProfile(event) {
+      var _this2 = this;
+
+      event.preventDefault(); // Disable button
+
+      this.$refs.updateProfileBtn.setAttribute('disabled', true); // Dispatch API action
+
+      this.$store.dispatch('updateProfile', {
+        uuid: this.user.uuid,
+        email: this.user.email,
+        password: this.user.password,
+        fullname: this.user.name
+      }).then(function (response) {
+        // Update local storage
+        var ls = new (secure_ls__WEBPACK_IMPORTED_MODULE_4___default())();
+        ls.set('user', response.content);
+
+        _this2.$bvToast.toast(response.message, {
+          title: 'C\'est fait!',
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 5000
+        });
+      })["catch"](function (error) {
+        _this2.$bvToast.toast(error.message, {
+          title: 'Quelque chose ne va pas!',
+          variant: 'warning',
+          solid: true,
+          autoHideDelay: 5000
+        });
+      })["finally"](function () {
+        _this2.$refs.updateProfileBtn.removeAttribute('disabled');
+      });
     }
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
@@ -123,6 +237,10 @@ __webpack_require__.r(__webpack_exports__);
 
     next();
   },
+  mounted: function mounted() {// Load user
+    //if(typeof this.user === "undefined" || this.user === null || Object.values(this.user).length === 0)
+    //this.loadStatistics();
+  },
   data: function data() {
     return {
       active: 'dashboard',
@@ -132,7 +250,8 @@ __webpack_require__.r(__webpack_exports__);
         key: 'name',
         label: 'Nom',
         sortable: true
-      }]
+      }],
+      confirmPassword: null
     };
   }
 });
@@ -527,7 +646,7 @@ var render = function() {
                                                   _c(
                                                     "b-button",
                                                     {
-                                                      ref: "submitBtn",
+                                                      ref: "submitRoomBtn",
                                                       attrs: {
                                                         block: "",
                                                         type: "submit",
@@ -585,17 +704,222 @@ var render = function() {
                             }
                           }),
                           _vm._v(" "),
-                          _c("b-tab", {
-                            attrs: {
-                              active: _vm.active === "profile",
-                              title: "Update profile"
-                            },
-                            on: {
-                              click: function($event) {
-                                _vm.active = "profile"
+                          _c(
+                            "b-tab",
+                            {
+                              attrs: {
+                                active: _vm.active === "profile",
+                                title: "Update profile"
+                              },
+                              on: {
+                                click: function($event) {
+                                  _vm.active = "profile"
+                                }
                               }
-                            }
-                          }),
+                            },
+                            [
+                              _c(
+                                "b-row",
+                                { attrs: { "align-h": "center" } },
+                                [
+                                  _c(
+                                    "b-col",
+                                    { attrs: { cols: "6" } },
+                                    [
+                                      _c(
+                                        "b-form",
+                                        {
+                                          staticClass: "mt-3 mb-3",
+                                          on: { submit: _vm.updateProfile }
+                                        },
+                                        [
+                                          _c(
+                                            "b-form-group",
+                                            {
+                                              attrs: {
+                                                id: "fullname-group",
+                                                label: "Nom complet :",
+                                                "label-for": "fullname"
+                                              }
+                                            },
+                                            [
+                                              _c("b-form-input", {
+                                                attrs: {
+                                                  id: "fullname",
+                                                  type: "text",
+                                                  placeholder:
+                                                    "Entrez votre nom et prénom",
+                                                  required: ""
+                                                },
+                                                model: {
+                                                  value: _vm.user.name,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.user,
+                                                      "name",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "user.name"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "b-form-group",
+                                            {
+                                              attrs: {
+                                                id: "email-group",
+                                                label: "Adresse e-mail :",
+                                                "label-for": "email"
+                                              }
+                                            },
+                                            [
+                                              _c("b-form-input", {
+                                                attrs: {
+                                                  id: "email",
+                                                  type: "email",
+                                                  placeholder:
+                                                    "Entrer votre e-mail",
+                                                  required: ""
+                                                },
+                                                model: {
+                                                  value: _vm.user.email,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.user,
+                                                      "email",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "user.email"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "b-form-group",
+                                            {
+                                              attrs: {
+                                                id: "password-group",
+                                                label: "Mot de passe :",
+                                                "label-for": "password"
+                                              }
+                                            },
+                                            [
+                                              _c("b-form-input", {
+                                                attrs: {
+                                                  id: "password",
+                                                  type: "password",
+                                                  placeholder:
+                                                    "Entrer un mot de passe",
+                                                  description:
+                                                    "Votre mot de passe doit comporter entre 8 et 20 caractères, contenir des lettres et des chiffres.",
+                                                  state: _vm.confirmedPassword
+                                                },
+                                                model: {
+                                                  value: _vm.user.password,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.user,
+                                                      "password",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "user.password"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "b-form-group",
+                                            {
+                                              attrs: {
+                                                id: "confirm-password-group",
+                                                label:
+                                                  "Mot de passe de confirmation :",
+                                                "label-for": "confirm-password"
+                                              }
+                                            },
+                                            [
+                                              _c("b-form-input", {
+                                                attrs: {
+                                                  id: "confirm-password",
+                                                  type: "password",
+                                                  placeholder:
+                                                    "Confirmer le mot de passe",
+                                                  state: _vm.confirmedPassword
+                                                },
+                                                model: {
+                                                  value: _vm.confirmPassword,
+                                                  callback: function($$v) {
+                                                    _vm.confirmPassword = $$v
+                                                  },
+                                                  expression: "confirmPassword"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c(
+                                                "b-form-invalid-feedback",
+                                                {
+                                                  attrs: {
+                                                    state: _vm.confirmedPassword
+                                                  }
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    "\n                                                Le mot de passe de confirmation ne correspond pas au mot de passe.\n                                            "
+                                                  )
+                                                ]
+                                              )
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "b-row",
+                                            { attrs: { "align-h": "end" } },
+                                            [
+                                              _c(
+                                                "b-col",
+                                                { attrs: { cols: "auto" } },
+                                                [
+                                                  _c(
+                                                    "b-button",
+                                                    {
+                                                      ref: "updateProfileBtn",
+                                                      attrs: {
+                                                        type: "submit",
+                                                        variant: "primary",
+                                                        disabled: !_vm.validProfileForm
+                                                      }
+                                                    },
+                                                    [_vm._v("Mettre à jour")]
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
                           _vm._v(" "),
                           _c("b-tab", {
                             attrs: { title: "Logout" },

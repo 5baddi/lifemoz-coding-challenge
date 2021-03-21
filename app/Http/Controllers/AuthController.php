@@ -19,7 +19,7 @@ class AuthController extends Controller
     /**
      * Constructor
      *
-     * @param UserService $userService
+     * @param \App\Service\UserService $userService
      */
     public function __construct(UserService $userService)
     {
