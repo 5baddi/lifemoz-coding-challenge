@@ -37,6 +37,40 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -47,7 +81,13 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Footer: _partials_footer_vue__WEBPACK_IMPORTED_MODULE_0__.default,
     Sidebar: _partials_sidebar_vue__WEBPACK_IMPORTED_MODULE_1__.default,
-    BNav: bootstrap_vue__WEBPACK_IMPORTED_MODULE_3__.BNav
+    BTab: bootstrap_vue__WEBPACK_IMPORTED_MODULE_3__.BTab,
+    BTable: bootstrap_vue__WEBPACK_IMPORTED_MODULE_3__.BTable
+  },
+  computed: {
+    validRoomForm: function validRoomForm() {
+      return this.room !== '';
+    }
   },
   methods: {
     logout: function logout() {
@@ -58,8 +98,18 @@ __webpack_require__.r(__webpack_exports__);
         ls.remove('user');
         ls.remove('token');
 
-        _this.$router.replace('/');
+        _this.$router.replace('/').then(function () {
+          _this.$bvToast.toast('👋', {
+            title: 'Goodbay..',
+            variant: 'success',
+            solid: true,
+            autoHideDelay: 5000
+          });
+        });
       });
+    },
+    addRoom: function addRoom(event) {
+      event.preventDefault();
     }
   },
   beforeRouteEnter: function beforeRouteEnter(to, from, next) {
@@ -75,7 +125,14 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      active: 'dashboard'
+      active: 'dashboard',
+      room: '',
+      rooms: [],
+      roomFields: [{
+        key: 'name',
+        label: 'Nom',
+        sortable: true
+      }]
     };
   }
 });
@@ -387,64 +444,163 @@ var render = function() {
                     "b-card-body",
                     [
                       _c(
-                        "b-nav",
-                        { attrs: { tabs: "", fill: "" } },
+                        "b-tabs",
+                        { attrs: { fill: "" } },
                         [
-                          _c(
-                            "b-nav-item",
-                            {
-                              attrs: { active: _vm.active === "dashboard" },
-                              on: {
-                                click: function($event) {
-                                  _vm.active = "dashboard"
-                                }
-                              }
+                          _c("b-tab", {
+                            attrs: {
+                              active: _vm.active === "dashboard",
+                              title: "Dashboard"
                             },
-                            [_vm._v("Dashboard")]
-                          ),
+                            on: {
+                              click: function($event) {
+                                _vm.active = "dashboard"
+                              }
+                            }
+                          }),
                           _vm._v(" "),
                           _c(
-                            "b-nav-item",
+                            "b-tab",
                             {
-                              attrs: { active: _vm.active === "rooms" },
+                              attrs: {
+                                active: _vm.active === "rooms",
+                                title: "Rooms"
+                              },
                               on: {
                                 click: function($event) {
                                   _vm.active = "rooms"
                                 }
                               }
                             },
-                            [_vm._v("Add new room")]
+                            [
+                              _c(
+                                "b-row",
+                                [
+                                  _c(
+                                    "b-col",
+                                    { attrs: { md: "4" } },
+                                    [
+                                      _c(
+                                        "b-form",
+                                        {
+                                          staticClass: "mt-3 mb-3",
+                                          on: { submit: _vm.addRoom }
+                                        },
+                                        [
+                                          _c(
+                                            "b-form-group",
+                                            {
+                                              attrs: {
+                                                id: "room-group",
+                                                label: "Nom:",
+                                                "label-for": "room"
+                                              }
+                                            },
+                                            [
+                                              _c("b-form-input", {
+                                                attrs: {
+                                                  id: "room",
+                                                  type: "text",
+                                                  placeholder: "Entrer le nom",
+                                                  required: ""
+                                                },
+                                                model: {
+                                                  value: _vm.room,
+                                                  callback: function($$v) {
+                                                    _vm.room = $$v
+                                                  },
+                                                  expression: "room"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "b-row",
+                                            { attrs: { "align-h": "end" } },
+                                            [
+                                              _c(
+                                                "b-col",
+                                                { attrs: { cols: "12" } },
+                                                [
+                                                  _c(
+                                                    "b-button",
+                                                    {
+                                                      ref: "submitBtn",
+                                                      attrs: {
+                                                        block: "",
+                                                        type: "submit",
+                                                        variant: "primary",
+                                                        disabled: !_vm.validRoomForm
+                                                      }
+                                                    },
+                                                    [_vm._v("Ajouter")]
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "b-col",
+                                    { attrs: { md: "8" } },
+                                    [
+                                      _c("b-table", {
+                                        staticClass: "mt-3",
+                                        attrs: {
+                                          striped: "",
+                                          hover: "",
+                                          items: _vm.rooms,
+                                          fields: _vm.roomFields
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
                           ),
                           _vm._v(" "),
-                          _c(
-                            "b-nav-item",
-                            {
-                              attrs: { active: _vm.active === "rservations" },
-                              on: {
-                                click: function($event) {
-                                  _vm.active = "rservations"
-                                }
-                              }
+                          _c("b-tab", {
+                            attrs: {
+                              active: _vm.active === "rservations",
+                              title: "Reservations"
                             },
-                            [_vm._v("Set reservation")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "b-nav-item",
-                            {
-                              attrs: { active: _vm.active === "profile" },
-                              on: {
-                                click: function($event) {
-                                  _vm.active = "profile"
-                                }
+                            on: {
+                              click: function($event) {
+                                _vm.active = "rservations"
                               }
-                            },
-                            [_vm._v("Update profile")]
-                          ),
+                            }
+                          }),
                           _vm._v(" "),
-                          _c("b-nav-item", { on: { click: _vm.logout } }, [
-                            _vm._v("Logout")
-                          ])
+                          _c("b-tab", {
+                            attrs: {
+                              active: _vm.active === "profile",
+                              title: "Update profile"
+                            },
+                            on: {
+                              click: function($event) {
+                                _vm.active = "profile"
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("b-tab", {
+                            attrs: { title: "Logout" },
+                            on: { click: _vm.logout }
+                          })
                         ],
                         1
                       )

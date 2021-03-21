@@ -43,7 +43,7 @@
     </b-container>
 </template>
 <script>
-import { BCard, BForm, BFormGroup, BFormInput, BLink } from 'bootstrap-vue'
+import { BCard, BForm, BFormGroup, BFormInput } from 'bootstrap-vue'
 import Footer from './partials/footer.vue'
 import Sidebar from './partials/sidebar.vue'
 
@@ -53,7 +53,6 @@ export default{
         BForm,
         BFormGroup,
         BFormInput,
-        BLink,
         Footer,
         Sidebar,
     },

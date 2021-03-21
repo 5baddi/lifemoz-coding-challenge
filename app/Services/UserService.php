@@ -25,7 +25,7 @@ class UserService
     /**
      * Constructor
      *
-     * @param UsersRepository $userRepository
+     * @param \App\Repositories\UsersRepository $userRepository
      */
     public function __construct(UsersRepository $userRepository)
     {

@@ -4,13 +4,47 @@
             <b-col md="10">
                 <b-card no-body class="overflow-hidden" style="min-height:50vh;">
                     <b-card-body>
-                        <b-nav tabs fill>
-                            <b-nav-item @click="active = 'dashboard'" :active="active === 'dashboard'">Dashboard</b-nav-item>
-                            <b-nav-item @click="active = 'rooms'" :active="active === 'rooms'">Add new room</b-nav-item>
-                            <b-nav-item @click="active = 'rservations'" :active="active === 'rservations'">Set reservation</b-nav-item>
-                            <b-nav-item @click="active = 'profile'" :active="active === 'profile'">Update profile</b-nav-item>
-                            <b-nav-item @click="logout">Logout</b-nav-item>
-                        </b-nav>
+                        <b-tabs fill>
+                            <b-tab @click="active = 'dashboard'" :active="active === 'dashboard'" title="Dashboard">
+                                
+                            </b-tab>
+                            <b-tab @click="active = 'rooms'" :active="active === 'rooms'" title="Rooms">
+                                <b-row>
+                                    <b-col md="4">
+                                        <b-form @submit="addRoom" class="mt-3 mb-3">
+                                            <b-form-group
+                                                id="room-group"
+                                                label="Nom:"
+                                                label-for="room">
+                                                <b-form-input
+                                                id="room"
+                                                v-model="room"
+                                                type="text"
+                                                placeholder="Entrer le nom"
+                                                required>
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-row align-h="end">
+                                                <b-col cols="12">
+                                                    <b-button block type="submit" ref="submitBtn" variant="primary" :disabled="!validRoomForm">Ajouter</b-button>
+                                                </b-col>
+                                            </b-row>
+                                        </b-form>
+                                    </b-col>
+                                    <b-col md="8">
+                                        <b-table class="mt-3" striped hover :items="rooms" :fields="roomFields"></b-table>
+                                    </b-col>
+                                </b-row>
+                            </b-tab>
+                            <b-tab @click="active = 'rservations'" :active="active === 'rservations'" title="Reservations">
+                            
+                            </b-tab>
+                            <b-tab @click="active = 'profile'" :active="active === 'profile'" title="Update profile">
+                            
+                            </b-tab>
+                            <b-tab @click="logout" title="Logout"></b-tab>
+                        </b-tabs>
                     </b-card-body>
                 </b-card>
                 <Footer></Footer>
@@ -22,7 +56,7 @@
 import Footer from './partials/footer.vue'
 import Sidebar from './partials/sidebar.vue'
 import { isUserLoggedIn } from '../auth'
-import { BNav } from 'bootstrap-vue'
+import { BTab, BTable } from 'bootstrap-vue'
 import SecureLS from 'secure-ls'
 
 export default{
@@ -30,7 +64,13 @@ export default{
     components: {
         Footer,
         Sidebar,
-        BNav,
+        BTab,
+        BTable,
+    },
+    computed: {
+        validRoomForm(){
+            return this.room !== '';
+        }
     },
     methods: {
         logout(){
@@ -41,7 +81,18 @@ export default{
                     ls.remove('token')
                     
                     this.$router.replace('/')
+                        .then(() => {
+                            this.$bvToast.toast('👋', {
+                                title: 'Goodbay..',
+                                variant: 'success',
+                                solid: true,
+                                autoHideDelay: 5000
+                            })
+                        })
                 })
+        },
+        addRoom(event){
+            event.preventDefault()
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -54,7 +105,16 @@ export default{
     },
     data(){
         return {
-            active: 'dashboard'
+            active: 'dashboard',
+            room: '',
+            rooms: [],
+            roomFields: [
+                {
+                    key: 'name',
+                    label: 'Nom',
+                    sortable: true
+                },
+            ]
         }
     }
 }

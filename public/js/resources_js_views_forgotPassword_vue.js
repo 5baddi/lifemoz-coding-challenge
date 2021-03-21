@@ -67,7 +67,6 @@ __webpack_require__.r(__webpack_exports__);
     BForm: bootstrap_vue__WEBPACK_IMPORTED_MODULE_0__.BForm,
     BFormGroup: bootstrap_vue__WEBPACK_IMPORTED_MODULE_0__.BFormGroup,
     BFormInput: bootstrap_vue__WEBPACK_IMPORTED_MODULE_0__.BFormInput,
-    BLink: bootstrap_vue__WEBPACK_IMPORTED_MODULE_0__.BLink,
     Footer: _partials_footer_vue__WEBPACK_IMPORTED_MODULE_1__.default,
     Sidebar: _partials_sidebar_vue__WEBPACK_IMPORTED_MODULE_2__.default
   },
