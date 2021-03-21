@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
+use App\Models\Reservation;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,5 +34,8 @@ Route::prefix('v1')->group(function(){
         // Room routes
         Route::get('/rooms', [RoomController::class, 'index']);
         Route::post('/rooms', [RoomController::class, 'store']);
+
+        // Reservation routes
+        Route::post('/reservations', [ReservationController::class, 'store']);
     });
 });
