@@ -128,6 +128,7 @@ import Sidebar from './partials/sidebar.vue'
 import { isUserLoggedIn } from '../auth'
 import { BTab, BTable } from 'bootstrap-vue'
 import SecureLS from 'secure-ls'
+import Datepicker from 'vuejs-datepicker'
 
 export default{
     name: 'Dashbaord',
@@ -136,6 +137,7 @@ export default{
         Sidebar,
         BTab,
         BTable,
+		Datepicker,
     },
     computed: {
         user(){
