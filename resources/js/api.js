@@ -36,6 +36,8 @@ const api = axios.create({
 // Re set token
 let ls = new SecureLS()
 let token = ls.get('token')
-api.defaults.headers.common.Authorization = `Bearer ${token}`
+if(token && token !== ''){
+    api.defaults.headers.common.Authorization = `Bearer ${token}`
+}
 
 export { api }

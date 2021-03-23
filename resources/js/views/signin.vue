@@ -93,6 +93,12 @@ export default{
                     ls.set('user', response.content.user)
                     ls.set('token', response.content.token)
 
+                    // Set token
+                    let token = ls.get('token')
+                    if(token && token !== ''){
+                        this.$http.defaults.headers.common.Authorization = `Bearer ${token}`
+                    }
+
                     this.$router.replace('/dashboard')
                         .then(() => {
                             this.$bvToast.toast(response.message, {

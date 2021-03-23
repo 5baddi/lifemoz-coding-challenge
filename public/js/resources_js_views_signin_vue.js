@@ -155,7 +155,13 @@ __webpack_require__.r(__webpack_exports__);
         // Save to local storage
         var ls = new (secure_ls__WEBPACK_IMPORTED_MODULE_0___default())();
         ls.set('user', response.content.user);
-        ls.set('token', response.content.token);
+        ls.set('token', response.content.token); // Set token
+
+        var token = ls.get('token');
+
+        if (token && token !== '') {
+          _this.$http.defaults.headers.common.Authorization = "Bearer ".concat(token);
+        }
 
         _this.$router.replace('/dashboard').then(function () {
           _this.$bvToast.toast(response.message, {

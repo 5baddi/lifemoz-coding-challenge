@@ -13853,6 +13853,7 @@ __webpack_require__.r(__webpack_exports__);
           end: val.end_date
         };
       });
+      this.$refs.calendar.render();
     },
     dateRange: function dateRange(newDateRange, oldDateRange) {
       if (newDateRange.startDate && newDateRange.endDate) {
