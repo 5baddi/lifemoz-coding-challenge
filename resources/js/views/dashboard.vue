@@ -292,6 +292,7 @@ export default{
                     end: val.end_date,
                 }
             })
+            this.$refs.calendar.render()
         },
         dateRange: function(newDateRange, oldDateRange){
             if(newDateRange.startDate && newDateRange.endDate){
