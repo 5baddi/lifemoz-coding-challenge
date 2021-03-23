@@ -8,7 +8,6 @@
                             <b-tab @click="active = 'dashboard'" :active="active === 'dashboard'" title="Dashboard">
                                 <b-row>
                                     <b-col md="12" class="mt-3">
-                                        <h2>Taux de remplissage pour chaque mois</h2>
                                         <canvas id="chart"></canvas>
                                     </b-col>
                                     <b-col md="12" class="mt-3">
@@ -390,6 +389,9 @@ export default{
             this.$store.dispatch('fetchReservationsRate')
                 .then(response => {
                     this.reservationsRate = response.content
+
+                    // Draw chart
+                    this.renderChart(this.reservationsRate)
                 })
                 .catch(error => {
                     this.$bvToast.toast(error.message, {
@@ -483,13 +485,50 @@ export default{
                 }
             })
         },
+        getRandomColorHex() {
+            let hex = "0123456789ABCDEF", color = "#"
+            for (var i = 1; i <= 6; i++) {
+                color += hex[Math.floor(Math.random() * 16)]
+            }
+
+            return color
+        },
         renderChart(data) {
             const chartEl = document.getElementById('chart')
 
             try{
                 const chart = new Chart(chartEl, {
                     type: 'bar',
-                    data: data
+                    data: {
+                        datasets: [{
+                            data: data.rates || [12, 50, 100],
+                            backgroundColor: [
+                                this.getRandomColorHex(),
+                                this.getRandomColorHex(),
+                                this.getRandomColorHex(),
+                            ]
+                        },],
+                        labels: data.months || []
+                    },
+                    options: {
+                        title : {
+                            display : true,
+                            position : "top",
+                            text : "Taux de remplissage pour chaque mois",
+                            fontSize : 18,
+                            fontColor : "#111"
+                        },
+                        legend : {
+                            display : false
+                        },
+                        scales : {
+                            yAxes : [{
+                                ticks : {
+                                    min : 0
+                                }
+                            }]
+                        }
+                    }
                 })
             }catch(error){
                 this.$bvToast.toast(error.message, {
@@ -508,20 +547,6 @@ export default{
         }
 
         next()
-    },
-    created(){
-        this.renderChart({
-                datasets: [{
-                    data: [
-                        12,
-                        90
-                    ],
-                }],
-                labels: [
-                    'Room one',
-                    'Room two',
-                ]
-            })
     },
     mounted(){
         // Load time zones
@@ -543,8 +568,6 @@ export default{
         if(typeof this.reservationsRate === "undefined" || this.reservationsRate === null || Object.values(this.reservationsRate).length === 0){
             this.loadReservationsRate()
         }
-
-        // this.renderChart([])
     },
     data(){
         return {

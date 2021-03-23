@@ -53,7 +53,7 @@ class ReservationService
 
         // List of months in current year
         $from = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', strtotime("January 1st")));
-        $to = Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:i:s', strtotime('first day of next month')));
+        $to = Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:i:s', strtotime('last day of this month')));
         $diffInMonths = $to->diffInMonths($from);
         $listOfMonths = [];
 

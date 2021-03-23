@@ -13762,7 +13762,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 
 
@@ -13948,7 +13947,9 @@ __webpack_require__.r(__webpack_exports__);
 
       // Dispatch API action
       this.$store.dispatch('fetchReservationsRate').then(function (response) {
-        _this6.reservationsRate = response.content;
+        _this6.reservationsRate = response.content; // Draw chart
+
+        _this6.renderChart(_this6.reservationsRate);
       })["catch"](function (error) {
         _this6.$bvToast.toast(error.message, {
           title: 'Quelque chose ne va pas!',
@@ -14035,13 +14036,48 @@ __webpack_require__.r(__webpack_exports__);
         };
       });
     },
+    getRandomColorHex: function getRandomColorHex() {
+      var hex = "0123456789ABCDEF",
+          color = "#";
+
+      for (var i = 1; i <= 6; i++) {
+        color += hex[Math.floor(Math.random() * 16)];
+      }
+
+      return color;
+    },
     renderChart: function renderChart(data) {
       var chartEl = document.getElementById('chart');
 
       try {
         var chart = new Chart(chartEl, {
           type: 'bar',
-          data: data
+          data: {
+            datasets: [{
+              data: data.rates || [12, 50, 100],
+              backgroundColor: [this.getRandomColorHex(), this.getRandomColorHex(), this.getRandomColorHex()]
+            }],
+            labels: data.months || []
+          },
+          options: {
+            title: {
+              display: true,
+              position: "top",
+              text: "Taux de remplissage pour chaque mois",
+              fontSize: 18,
+              fontColor: "#111"
+            },
+            legend: {
+              display: false
+            },
+            scales: {
+              yAxes: [{
+                ticks: {
+                  min: 0
+                }
+              }]
+            }
+          }
         });
       } catch (error) {
         this.$bvToast.toast(error.message, {
@@ -14064,14 +14100,6 @@ __webpack_require__.r(__webpack_exports__);
 
     next();
   },
-  created: function created() {
-    this.renderChart({
-      datasets: [{
-        data: [12, 90]
-      }],
-      labels: ['Room one', 'Room two']
-    });
-  },
   mounted: function mounted() {
     // Load time zones
     if (typeof this.timeZones === "undefined" || this.timeZones === null || Object.values(this.timeZones).length === 0) {
@@ -14091,8 +14119,7 @@ __webpack_require__.r(__webpack_exports__);
 
     if (typeof this.reservationsRate === "undefined" || this.reservationsRate === null || Object.values(this.reservationsRate).length === 0) {
       this.loadReservationsRate();
-    } // this.renderChart([])
-
+    }
   },
   data: function data() {
     return {
@@ -53589,15 +53616,7 @@ var render = function() {
                                       staticClass: "mt-3",
                                       attrs: { md: "12" }
                                     },
-                                    [
-                                      _c("h2", [
-                                        _vm._v(
-                                          "Taux de remplissage pour chaque mois"
-                                        )
-                                      ]),
-                                      _vm._v(" "),
-                                      _c("canvas", { attrs: { id: "chart" } })
-                                    ]
+                                    [_c("canvas", { attrs: { id: "chart" } })]
                                   ),
                                   _vm._v(" "),
                                   _c(

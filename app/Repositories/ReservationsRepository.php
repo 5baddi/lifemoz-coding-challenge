@@ -35,7 +35,7 @@ class ReservationsRepository extends AbstractRepository
     {
         // Current year
         $startYear = date("Y-m-d H:i:s", strtotime("January 1st"));
-        $endYear = date("Y-m-d H:i:s",strtotime("first day of next month"));;
+        $endYear = date("Y-m-d H:i:s",strtotime("last day of this month"));;
 
         return Reservation::whereBetween('start_date',[$startYear, $endYear])
                     ->whereBetween('end_date',[$startYear, $endYear])
