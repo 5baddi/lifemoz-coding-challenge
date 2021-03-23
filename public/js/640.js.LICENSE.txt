@@ -1,0 +1,26 @@
+/*!
+ * Chart.js v2.9.4
+ * https://www.chartjs.org
+ * (c) 2020 Chart.js Contributors
+ * Released under the MIT License
+ */
+
+/*!
+FullCalendar v5.5.0
+Docs & License: https://fullcalendar.io/
+(c) 2020 Adam Shaw
+*/
+
+//! Copyright (c) JS Foundation and other contributors
+
+//! github.com/moment/moment-timezone
+
+//! license : MIT
+
+//! moment-timezone.js
+
+//! moment.js
+
+//! moment.js locale configuration
+
+//! version : 0.5.33
