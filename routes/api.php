@@ -41,6 +41,7 @@ Route::prefix('v1')->group(function(){
 
         // Reservation routes
         Route::get('/reservations', [ReservationController::class, 'index']);
+        Route::get('/reservations/rate', [ReservationController::class, 'rate']);
         Route::post('/reservations', [ReservationController::class, 'store']);
     });
 });

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { isUserLoggedIn } from './auth'
+import SecureLS from 'secure-ls'
+import { api } from './api'
 
 // Use router
 Vue.use(VueRouter)
@@ -59,6 +61,13 @@ const router = new VueRouter({
 
 // Routes authentication middleware
 router.beforeEach((to, from, next) => {
+    // Set token
+    let ls = new SecureLS()
+    let token = ls.get('token')
+    if(token && token !== ''){
+        api.defaults.headers.common.Authorization = `Bearer ${token}`
+    }
+
     if(to.matched.some(route => route.meta.redirectIfLoggedIn)){
         const isLoggedIn = isUserLoggedIn()
         if(isLoggedIn){

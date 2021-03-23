@@ -156,6 +156,15 @@ const actions = {
             .catch(error => reject(error))
         })
     },
+    fetchReservationsRate({ commit, state}, data){
+        return new Promise((resolve, reject) => {
+            api.get("v1/reservations/rate", data)
+            .then(response => {
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
     fetchTimeZones({ commit, state}, data){
         return new Promise((resolve, reject) => {
             api.get("v1/timezone", data)

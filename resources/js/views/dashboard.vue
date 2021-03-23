@@ -12,7 +12,8 @@
                                         <canvas id="chart"></canvas>
                                     </b-col>
                                     <b-col md="12" class="mt-3">
-                                        <FullCalendar ref="calendar" :options="calendarOptions" />
+                                        <h2>{{ reservations.length || 0 }} Reservations</h2>
+                                        <FullCalendar ref="calendar" :options="calendarOptions"/>
                                     </b-col>
                                 </b-row>
                             </b-tab>
@@ -276,28 +277,21 @@ export default{
             this.selectedTimezone = newUser.timezone
             this.calendarOptions.timeZone = newUser.timezone
 
-            if(this.dateRange.startDate && this.dateRange.endDate){
-                this.dateRange.startDate = moment(this.dateRange.startDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone)
-                this.dateRange.startDate = this.dateRange.startDate.tz(newUser.timezone)
+            // if(this.dateRange.startDate && this.dateRange.endDate){
+            //     this.dateRange.startDate = moment(this.dateRange.startDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone)
+            //     this.dateRange.startDate = this.dateRange.startDate.tz(newUser.timezone)
                 
-                this.dateRange.endDate = moment(this.dateRange.endDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone)
-                this.dateRange.endDate = this.dateRange.endDate.tz(newUser.timezone)
-            }
+            //     this.dateRange.endDate = moment(this.dateRange.endDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone)
+            //     this.dateRange.endDate = this.dateRange.endDate.tz(newUser.timezone)
+            // }
         },
         reservations: function(newReservations, oldReservations){
-            this.calendarOptions.events = newReservations.map((val, index) => {
-                return {
-                    title: val.name,
-                    start: val.start_date,
-                    end: val.end_date,
-                }
-            })
-            this.$refs.calendar.render()
+            this.initEvents(newReservations)
         },
         dateRange: function(newDateRange, oldDateRange){
             if(newDateRange.startDate && newDateRange.endDate){
-                this.reservation.start_date = moment(newDateRange.startDate).format('dd/mm/yyyy HH:MM')
-                this.reservation.end_date = moment(newDateRange.endDate).format('dd/mm/yyyy HH:MM')
+                this.reservation.start_date = newDateRange.startDate
+                this.reservation.end_date = newDateRange.endDate
             }
         }
     },
@@ -379,6 +373,24 @@ export default{
         loadReservations(){
             // Dispatch API action
             this.$store.dispatch('fetchReservations')
+                .then(response => {
+                    this.initEvents(response.content)
+                })
+                .catch(error => {
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+        },
+        loadReservationsRate(){
+            // Dispatch API action
+            this.$store.dispatch('fetchReservationsRate')
+                .then(response => {
+                    this.reservationsRate = response.content
+                })
                 .catch(error => {
                     this.$bvToast.toast(error.message, {
                         title: 'Quelque chose ne va pas!',
@@ -435,6 +447,14 @@ export default{
             // Dispatch API action
             this.$store.dispatch('bookRoom', this.reservation)
                 .then(response => {
+                    this.reservation = {
+                        name: '',
+                        description: '',
+                        room_id: null,
+                        start_date: moment().format('DD/MM/yyyy HH:mm'),
+                        end_date: null,
+                    }
+
                     this.$bvToast.toast(response.message, {
                         title: 'C\'est fait!',
                         variant: 'success',
@@ -453,6 +473,15 @@ export default{
                 .finally(() => {
                     this.$refs.submitReservationBtn.removeAttribute('disabled')
                 })
+        },
+        initEvents(reservations){
+            this.calendarOptions.events = reservations.map((val, index) => {
+                return {
+                    title: val.name,
+                    start: val.start_date,
+                    end: val.end_date,
+                }
+            })
         },
         renderChart(data) {
             const chartEl = document.getElementById('chart')
@@ -509,8 +538,13 @@ export default{
         if(typeof this.reservations === "undefined" || this.reservations === null || Object.values(this.reservations).length === 0){
             this.loadReservations()
         }
+        
+        // Load rate of reservations
+        if(typeof this.reservationsRate === "undefined" || this.reservationsRate === null || Object.values(this.reservationsRate).length === 0){
+            this.loadReservationsRate()
+        }
 
-        this.renderChart([])
+        // this.renderChart([])
     },
     data(){
         return {
@@ -590,9 +624,10 @@ export default{
                 initialView: 'dayGridMonth',
                 locale: frLocale,
                 timeZone: 'local',
-                events: [],
                 selectable: true,
-            }
+                events: []
+            },
+            reservationsRate: []
         }
     }
 }

@@ -13762,6 +13762,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -13836,29 +13837,20 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     user: function user(newUser, oldUser) {
       this.selectedTimezone = newUser.timezone;
-      this.calendarOptions.timeZone = newUser.timezone;
-
-      if (this.dateRange.startDate && this.dateRange.endDate) {
-        this.dateRange.startDate = moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()(this.dateRange.startDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone);
-        this.dateRange.startDate = this.dateRange.startDate.tz(newUser.timezone);
-        this.dateRange.endDate = moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()(this.dateRange.endDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone);
-        this.dateRange.endDate = this.dateRange.endDate.tz(newUser.timezone);
-      }
+      this.calendarOptions.timeZone = newUser.timezone; // if(this.dateRange.startDate && this.dateRange.endDate){
+      //     this.dateRange.startDate = moment(this.dateRange.startDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone)
+      //     this.dateRange.startDate = this.dateRange.startDate.tz(newUser.timezone)
+      //     this.dateRange.endDate = moment(this.dateRange.endDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone)
+      //     this.dateRange.endDate = this.dateRange.endDate.tz(newUser.timezone)
+      // }
     },
     reservations: function reservations(newReservations, oldReservations) {
-      this.calendarOptions.events = newReservations.map(function (val, index) {
-        return {
-          title: val.name,
-          start: val.start_date,
-          end: val.end_date
-        };
-      });
-      this.$refs.calendar.render();
+      this.initEvents(newReservations);
     },
     dateRange: function dateRange(newDateRange, oldDateRange) {
       if (newDateRange.startDate && newDateRange.endDate) {
-        this.reservation.start_date = moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()(newDateRange.startDate).format('dd/mm/yyyy HH:MM');
-        this.reservation.end_date = moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()(newDateRange.endDate).format('dd/mm/yyyy HH:MM');
+        this.reservation.start_date = newDateRange.startDate;
+        this.reservation.end_date = newDateRange.endDate;
       }
     }
   },
@@ -13940,7 +13932,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       // Dispatch API action
-      this.$store.dispatch('fetchReservations')["catch"](function (error) {
+      this.$store.dispatch('fetchReservations').then(function (response) {
+        _this5.initEvents(response.content);
+      })["catch"](function (error) {
         _this5.$bvToast.toast(error.message, {
           title: 'Quelque chose ne va pas!',
           variant: 'warning',
@@ -13949,8 +13943,23 @@ __webpack_require__.r(__webpack_exports__);
         });
       });
     },
-    updateProfile: function updateProfile(event) {
+    loadReservationsRate: function loadReservationsRate() {
       var _this6 = this;
+
+      // Dispatch API action
+      this.$store.dispatch('fetchReservationsRate').then(function (response) {
+        _this6.reservationsRate = response.content;
+      })["catch"](function (error) {
+        _this6.$bvToast.toast(error.message, {
+          title: 'Quelque chose ne va pas!',
+          variant: 'warning',
+          solid: true,
+          autoHideDelay: 5000
+        });
+      });
+    },
+    updateProfile: function updateProfile(event) {
+      var _this7 = this;
 
       event.preventDefault(); // Disable button
 
@@ -13967,31 +13976,6 @@ __webpack_require__.r(__webpack_exports__);
         var ls = new (secure_ls__WEBPACK_IMPORTED_MODULE_4___default())();
         ls.set('user', response.content);
 
-        _this6.$bvToast.toast(response.message, {
-          title: 'C\'est fait!',
-          variant: 'success',
-          solid: true,
-          autoHideDelay: 5000
-        });
-      })["catch"](function (error) {
-        _this6.$bvToast.toast(error.message, {
-          title: 'Quelque chose ne va pas!',
-          variant: 'warning',
-          solid: true,
-          autoHideDelay: 5000
-        });
-      })["finally"](function () {
-        _this6.$refs.updateProfileBtn.removeAttribute('disabled');
-      });
-    },
-    bookRoom: function bookRoom(event) {
-      var _this7 = this;
-
-      event.preventDefault(); // Disable button
-
-      this.$refs.submitReservationBtn.setAttribute('disabled', true); // Dispatch API action
-
-      this.$store.dispatch('bookRoom', this.reservation).then(function (response) {
         _this7.$bvToast.toast(response.message, {
           title: 'C\'est fait!',
           variant: 'success',
@@ -14006,7 +13990,49 @@ __webpack_require__.r(__webpack_exports__);
           autoHideDelay: 5000
         });
       })["finally"](function () {
-        _this7.$refs.submitReservationBtn.removeAttribute('disabled');
+        _this7.$refs.updateProfileBtn.removeAttribute('disabled');
+      });
+    },
+    bookRoom: function bookRoom(event) {
+      var _this8 = this;
+
+      event.preventDefault(); // Disable button
+
+      this.$refs.submitReservationBtn.setAttribute('disabled', true); // Dispatch API action
+
+      this.$store.dispatch('bookRoom', this.reservation).then(function (response) {
+        _this8.reservation = {
+          name: '',
+          description: '',
+          room_id: null,
+          start_date: moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()().format('DD/MM/yyyy HH:mm'),
+          end_date: null
+        };
+
+        _this8.$bvToast.toast(response.message, {
+          title: 'C\'est fait!',
+          variant: 'success',
+          solid: true,
+          autoHideDelay: 5000
+        });
+      })["catch"](function (error) {
+        _this8.$bvToast.toast(error.message, {
+          title: 'Quelque chose ne va pas!',
+          variant: 'warning',
+          solid: true,
+          autoHideDelay: 5000
+        });
+      })["finally"](function () {
+        _this8.$refs.submitReservationBtn.removeAttribute('disabled');
+      });
+    },
+    initEvents: function initEvents(reservations) {
+      this.calendarOptions.events = reservations.map(function (val, index) {
+        return {
+          title: val.name,
+          start: val.start_date,
+          end: val.end_date
+        };
       });
     },
     renderChart: function renderChart(data) {
@@ -14060,9 +14086,13 @@ __webpack_require__.r(__webpack_exports__);
 
     if (typeof this.reservations === "undefined" || this.reservations === null || Object.values(this.reservations).length === 0) {
       this.loadReservations();
-    }
+    } // Load rate of reservations
 
-    this.renderChart([]);
+
+    if (typeof this.reservationsRate === "undefined" || this.reservationsRate === null || Object.values(this.reservationsRate).length === 0) {
+      this.loadReservationsRate();
+    } // this.renderChart([])
+
   },
   data: function data() {
     return {
@@ -14129,9 +14159,10 @@ __webpack_require__.r(__webpack_exports__);
         initialView: 'dayGridMonth',
         locale: _fullcalendar_core_locales_fr__WEBPACK_IMPORTED_MODULE_10__.default,
         timeZone: 'local',
-        events: [],
-        selectable: true
-      }
+        selectable: true,
+        events: []
+      },
+      reservationsRate: []
     };
   }
 });
@@ -53576,6 +53607,13 @@ var render = function() {
                                       attrs: { md: "12" }
                                     },
                                     [
+                                      _c("h2", [
+                                        _vm._v(
+                                          _vm._s(_vm.reservations.length || 0) +
+                                            " Reservations"
+                                        )
+                                      ]),
+                                      _vm._v(" "),
                                       _c("FullCalendar", {
                                         ref: "calendar",
                                         attrs: { options: _vm.calendarOptions }
