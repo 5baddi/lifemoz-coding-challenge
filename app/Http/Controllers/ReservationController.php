@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ReservationResource;
 use Exception;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use App\Services\ReservationService;
 
-class RservationController extends Controller
+class ReservationController extends Controller
 {
     /**
      * Reservation service
@@ -24,6 +25,22 @@ class RservationController extends Controller
     public function __construct(ReservationService $reservationService)
     {
         $this->reservationService = $reservationService;
+    }
+
+    /**
+     * Get all reservation
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        // Fetch all reservations
+        $reservations = $this->reservationService->all();
+
+        return response()->success(
+            __('messages.reservations_fetched'),
+            ReservationResource::collection($reservations)
+        );
     }
 
     /**

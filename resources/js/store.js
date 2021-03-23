@@ -11,6 +11,8 @@ const state = () => ({
     user: getUser(),
     token: null,
     rooms: [],
+    reservations: [],
+    timeZones: [],
 })
 
 // Getters
@@ -18,6 +20,8 @@ const getters = {
     user: state => state.user,
     token: state => state.token,
     rooms: state => state.rooms,
+    reservations: state => state.reservations,
+    timeZones: state => state.timeZones,
 }
 
 // Mutations
@@ -30,6 +34,12 @@ const mutations = {
     },
     setRooms: (state, rooms) => {
         state.rooms = rooms
+    },
+    setReservations: (state, reservations) => {
+        state.reservations = reservations
+    },
+    setTimeZones: (state, timeZones) => {
+        state.timeZones = timeZones
     }
 }
 
@@ -116,6 +126,30 @@ const actions = {
             .then(response => {
                 // Commit state
                 commit('setRooms', response.data.content)
+
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
+    fetchReservations({ commit, state}, data){
+        return new Promise((resolve, reject) => {
+            api.get("v1/reservations", data)
+            .then(response => {
+                // Commit state
+                commit('setReservations', response.data.content)
+
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
+    fetchTimeZones({ commit, state}, data){
+        return new Promise((resolve, reject) => {
+            api.get("v1/timezone", data)
+            .then(response => {
+                // Commit state
+                commit('setTimeZones', response.data.content)
 
                 resolve(response.data)
             })

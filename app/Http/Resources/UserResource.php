@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'uuid'              =>  $this->uuid,
             'email'             =>  $this->email,
             'name'              =>  $this->name,
+            'timzezone'         =>  $this->timezone,
             'last_login'        =>  $this->last_login ? Carbon::parse($this->last_login)->format('H:i d/m/Y') : null,
         ];
     }

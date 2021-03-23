@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use InvalidArgumentException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ReservationResource;
@@ -25,6 +26,16 @@ class ReservationService
     public function __construct(ReservationsRepository $reservationRepository)
     {
         $this->reservationRepository = $reservationRepository;
+    }
+
+    /**
+     * Fetch all reservations
+     * 
+     * @return \Illuminate\Support\Collection
+     */
+    public function all() : Collection
+    {
+        return $this->reservationRepository->allWithRelationships();
     }
 
     /**

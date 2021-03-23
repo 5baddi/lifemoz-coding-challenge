@@ -6,7 +6,15 @@
                     <b-card-body>
                         <b-tabs fill>
                             <b-tab @click="active = 'dashboard'" :active="active === 'dashboard'" title="Dashboard">
-                                
+                                <b-row>
+                                    <b-col md="12" class="mt-3">
+                                        <h2>Taux de remplissage pour chaque mois</h2>
+                                        <canvas ref="chart"></canvas>
+                                    </b-col>
+                                    <b-col md="12" class="mt-3">
+                                        <FullCalendar :options="calendarOptions" />
+                                    </b-col>
+                                </b-row>
                             </b-tab>
                             <b-tab @click="active = 'rooms'" :active="active === 'rooms'" title="Rooms">
                                 <b-row>
@@ -97,6 +105,9 @@
                                             </b-row>
                                         </b-form>
                                     </b-col>
+                                    <b-col md="8">
+                                        <b-table class="mt-3" striped hover :items="reservations" :fields="reservationFields"></b-table>
+                                    </b-col>
                                 </b-row>
                             </b-tab>
                             <b-tab @click="active = 'profile'" :active="active === 'profile'" title="Update profile">
@@ -127,6 +138,14 @@
                                                 type="email"
                                                 placeholder="Entrer votre e-mail"
                                                 required>
+                                                </b-form-input>
+                                            </b-form-group>
+
+                                            <b-form-group
+                                                id="user-timezone-group"
+                                                label="Fuseau horaire:"
+                                                label-for="user-timezone">
+                                                <b-form-select id="user-timezone" v-model="selectedTimezone" :options="timeZones"></b-form-select>
                                                 </b-form-input>
                                             </b-form-group>
 
@@ -189,6 +208,11 @@ import { BForm, BFormGroup, BFormInput, BFormSelect, BFormTextarea, BTab, BTable
 import SecureLS from 'secure-ls'
 import DateRangePicker from 'vue2-daterange-picker'
 import moment from 'moment'
+import FullCalendar from '@fullcalendar/vue'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import frLocale from '@fullcalendar/core/locales/fr'
+import { Bar } from 'vue-chartjs'
 
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
@@ -205,6 +229,7 @@ export default{
         BTab,
         BTable,
         DateRangePicker,
+        FullCalendar,
     },
     filters: {
         date: function(value){
@@ -215,8 +240,17 @@ export default{
         user(){
             return this.$store.state.user
         },
+        timeZones(){
+            return this.$store.state.timeZones
+        },
+        selectedTimezone(){
+            return this.user.timezone || 'Europe/Paris'
+        },
         rooms(){
             return this.$store.state.rooms
+        },
+        reservations(){
+            return this.$store.state.reservations
         },
         validRoomForm(){
             return this.room !== '';
@@ -243,6 +277,11 @@ export default{
             })
 
             return roomsList
+        }
+    },
+    watch: {
+        user: function(newUser, oldUser){
+            this.selectedTimezone = newUser.timezone
         }
     },
     methods: {
@@ -296,9 +335,33 @@ export default{
                     this.$refs.submitRoomBtn.removeAttribute('disabled')
                 })
         },
+        loadTimeZones(){
+            // Dispatch API action
+            this.$store.dispatch('fetchTimeZones')
+                .catch(error => {
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+        },
         loadRooms(){
             // Dispatch API action
             this.$store.dispatch('fetchRooms')
+                .catch(error => {
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+        },
+        loadReservations(){
+            // Dispatch API action
+            this.$store.dispatch('fetchReservations')
                 .catch(error => {
                     this.$bvToast.toast(error.message, {
                         title: 'Quelque chose ne va pas!',
@@ -319,7 +382,8 @@ export default{
                     uuid: this.user.uuid, 
                     email: this.user.email, 
                     password: this.user.password,
-                    fullname: this.user.name
+                    fullname: this.user.name,
+                    timezone: this.selectedTimezone,
                 })
                 .then(response => {
                     // Update local storage
@@ -372,6 +436,18 @@ export default{
                 .finally(() => {
                     this.$refs.submitReservationBtn.removeAttribute('disabled')
                 })
+        },
+        renderChart(data) {
+            const chartEl = this.$refs.chart
+
+            try{
+                const chart = new Chart(chartEl, {
+                    type: 'bar',
+                    data: data
+                })
+            }catch(e){
+                chartEl.style.display = "none !important"
+            }
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -383,10 +459,22 @@ export default{
         next()
     },
     mounted(){
+        // Load time zones
+        if(typeof this.timeZones === "undefined" || this.timeZones === null || Object.values(this.timeZones).length === 0){
+            this.loadTimeZones()
+        }
+        
         // Load rooms
         if(typeof this.rooms === "undefined" || this.rooms === null || Object.values(this.rooms).length === 0){
             this.loadRooms()
         }
+        
+        // Load reservations
+        if(typeof this.reservations === "undefined" || this.reservations === null || Object.values(this.reservations).length === 0){
+            this.loadReservations()
+        }
+
+        this.renderChart([])
     },
     data(){
         return {
@@ -406,6 +494,28 @@ export default{
                 {
                     key: 'created_at',
                     label: 'Créé à',
+                    sortable: true
+                },
+            ],
+            reservationFields: [
+                {
+                    key: 'name',
+                    label: 'Nom',
+                    sortable: true
+                },
+                {
+                    key: 'room.name',
+                    label: 'Chambre',
+                    sortable: true
+                },
+                {
+                    key: 'user.name',
+                    label: 'User',
+                    sortable: true
+                },
+                {
+                    key: 'booking',
+                    label: 'Date de début et fin',
                     sortable: true
                 },
             ],
@@ -439,6 +549,12 @@ export default{
             dateRange: {
                 startDate: null,
                 endDate: null
+            },
+            calendarOptions: {
+                plugins: [ dayGridPlugin, interactionPlugin ],
+                initialView: 'dayGridMonth',
+                locale: frLocale,
+                timeZone: 'local'
             }
         }
     }

@@ -30,8 +30,10 @@ class Reservation extends Model
      * @var array
      */
     protected $casts = [
-        'user_id' => 'integer',
-        'room_id' => 'integer',
+        'user_id'       => 'integer',
+        'room_id'       => 'integer',
+        'start_date'    => 'dateTime',
+        'end_date'      => 'dateTime',
     ];
 
     /**
@@ -51,6 +53,6 @@ class Reservation extends Model
      */
     public function room()
     {
-        return $this->belongsTo(Rooom::class);
+        return $this->belongsTo(Room::class);
     }
 }

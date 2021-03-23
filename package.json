@@ -19,12 +19,17 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "@fullcalendar/daygrid": "^5.5.0",
+        "@fullcalendar/interaction": "^5.5.0",
+        "@fullcalendar/vue": "^5.5.0",
         "bootstrap": "^4.6.0",
         "bootstrap-vue": "^2.21.2",
+        "chart.js": "^2.9.4",
         "file-loader": "^6.2.0",
         "moment": "^2.29.1",
         "secure-ls": "^1.2.6",
         "vue": "^2.6.12",
+        "vue-chartjs": "^3.5.1",
         "vue-router": "^3.4.9",
         "vue2-daterange-picker": "^0.6.3",
         "vuejs-datepicker": "^1.6.2",

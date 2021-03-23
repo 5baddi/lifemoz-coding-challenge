@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FrontController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
-use App\Models\Reservation;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReservationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,9 @@ Route::prefix('v1')->group(function(){
     Route::post('/reset/password', [AuthController::class, 'resetPassword']);
     Route::post('/verify/token', [AuthController::class, 'verifyToken']);
 
+    // Timezone
+    Route::get('/timezone', [FrontController::class, 'timeZones']);
+
     // Private routes
     Route::middleware('auth:sanctum')->group(function(){
         // User routes
@@ -36,6 +40,7 @@ Route::prefix('v1')->group(function(){
         Route::post('/rooms', [RoomController::class, 'store']);
 
         // Reservation routes
+        Route::get('/reservations', [ReservationController::class, 'index']);
         Route::post('/reservations', [ReservationController::class, 'store']);
     });
 });
