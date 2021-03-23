@@ -13836,10 +13836,14 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     user: function user(newUser, oldUser) {
       this.selectedTimezone = newUser.timezone;
-      this.calendarOptions.timeZone = newUser.timezone; // if(this.dateRange.startDate && this.dateRange.endDate){
-      //     this.dateRange.startDate = moment().tz(this.dateRange.startDate, newUser.timezone).format('dd/mm/yyyy HH:mm')
-      //     this.dateRange.endDate = moment().tz(this.dateRange.endDate, newUser.timezone).format('dd/mm/yyyy HH:mm')
-      // }
+      this.calendarOptions.timeZone = newUser.timezone;
+
+      if (this.dateRange.startDate && this.dateRange.endDate) {
+        this.dateRange.startDate = moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()(this.dateRange.startDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone);
+        this.dateRange.startDate = this.dateRange.startDate.tz(newUser.timezone);
+        this.dateRange.endDate = moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()(this.dateRange.endDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone);
+        this.dateRange.endDate = this.dateRange.endDate.tz(newUser.timezone);
+      }
     },
     reservations: function reservations(newReservations, oldReservations) {
       this.calendarOptions.events = newReservations.map(function (val, index) {
@@ -13852,8 +13856,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     dateRange: function dateRange(newDateRange, oldDateRange) {
       if (newDateRange.startDate && newDateRange.endDate) {
-        this.reservation.start_date = newDateRange.startDate;
-        this.reservation.end_date = newDateRange.endDate;
+        this.reservation.start_date = moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()(newDateRange.startDate).format('dd/mm/yyyy HH:MM');
+        this.reservation.end_date = moment_timezone__WEBPACK_IMPORTED_MODULE_6___default()(newDateRange.endDate).format('dd/mm/yyyy HH:MM');
       }
     }
   },
@@ -14106,7 +14110,7 @@ __webpack_require__.r(__webpack_exports__);
       },
       datePickerLocal: {
         direction: 'ltr',
-        format: 'dd/mm/yyyy',
+        format: 'dd/mm/yyyy H:MM',
         separator: ' - ',
         applyLabel: 'Appliquer',
         cancelLabel: 'Annuler',

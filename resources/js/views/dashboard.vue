@@ -277,10 +277,10 @@ export default{
             this.calendarOptions.timeZone = newUser.timezone
 
             if(this.dateRange.startDate && this.dateRange.endDate){
-                this.dateRange.startDate = moment(this.dateRange.startDate).format('dd/mm/yyyy HH:mm').tz(newUser.timezone)
+                this.dateRange.startDate = moment(this.dateRange.startDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone)
                 this.dateRange.startDate = this.dateRange.startDate.tz(newUser.timezone)
                 
-                this.dateRange.endDate = moment(this.dateRange.endDate).format('dd/mm/yyyy HH:mm').tz(newUser.timezone)
+                this.dateRange.endDate = moment(this.dateRange.endDate).format('dd/mm/yyyy HH:MM').tz(newUser.timezone)
                 this.dateRange.endDate = this.dateRange.endDate.tz(newUser.timezone)
             }
         },
@@ -295,8 +295,8 @@ export default{
         },
         dateRange: function(newDateRange, oldDateRange){
             if(newDateRange.startDate && newDateRange.endDate){
-                this.reservation.start_date = moment(newDateRange.startDate).format('dd/mm/yyyy HH:mm')
-                this.reservation.end_date = moment(newDateRange.endDate).format('dd/mm/yyyy HH:mm')
+                this.reservation.start_date = moment(newDateRange.startDate).format('dd/mm/yyyy HH:MM')
+                this.reservation.end_date = moment(newDateRange.endDate).format('dd/mm/yyyy HH:MM')
             }
         }
     },
@@ -571,7 +571,7 @@ export default{
             },
             datePickerLocal: {
                 direction: 'ltr',
-                format: 'dd/mm/yyyy',
+                format: 'dd/mm/yyyy H:MM',
                 separator: ' - ',
                 applyLabel: 'Appliquer',
                 cancelLabel: 'Annuler',
