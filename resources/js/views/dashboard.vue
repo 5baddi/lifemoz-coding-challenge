@@ -2,7 +2,7 @@
     <b-container fluid>
         <b-row class="main-card" align-v="center" align-h="center">
             <b-col md="10">
-                <b-card no-body class="overflow-hidden" style="min-height:50vh;">
+                <b-card no-body style="min-height:50vh;">
                     <b-card-body>
                         <b-tabs fill>
                             <b-tab @click="active = 'dashboard'" :active="active === 'dashboard'" title="Dashboard">
@@ -38,7 +38,66 @@
                                 </b-row>
                             </b-tab>
                             <b-tab @click="active = 'rservations'" :active="active === 'rservations'" title="Reservations">
-                            
+                                <b-row>
+                                    <b-col md="4">
+                                        <b-form @submit="bookRoom" class="mt-3 mb-3">
+                                            <b-form-group
+                                                id="reservation-group"
+                                                label="Nom de la réservation:"
+                                                label-for="reservation">
+                                                <b-form-input
+                                                id="reservation"
+                                                v-model="reservation.name"
+                                                type="text"
+                                                placeholder="Entrez le nom de la réservation"
+                                                required>
+                                                </b-form-input>
+                                            </b-form-group>
+                                            <b-form-group
+                                                id="reservation-room-group"
+                                                label="Chambre:"
+                                                label-for="reservation-room">
+                                                <b-form-select id="reservation-room" v-model="reservation.room_id" :options="roomsSelectOptions" required></b-form-select>
+                                                </b-form-input>
+                                            </b-form-group>
+                                            <b-form-group
+                                                id="reservation-date-group"
+                                                label="Date de début et fin:"
+                                                label-for="reservation-date" v-show="reservation.room_id">
+                                                <date-range-picker
+                                                    id="reservation-date"
+                                                    ref="picker"
+                                                    class="form-control"
+                                                    :time-picker="true"
+                                                    :linked-calendars="true"
+                                                    :ranges="false"
+                                                    :locale-data="{ firstDay: 1, format: 'DD-MM-YYYY HH:mm:ss' }"
+                                                    :date-range="dateRange"
+                                                    v-model="dateRange">
+                                                    <template v-slot:input="picker" style="min-width: 350px;">
+                                                        {{ picker.startDate | date }} - {{ picker.endDate | date }}
+                                                    </template>
+                                                </date-range-picker>
+                                            </b-form-group>
+                                            <b-form-group
+                                                id="reservation-description-group"
+                                                label="Description:"
+                                                label-for="reservation-description">
+                                                <b-form-textarea
+                                                id="reservation-description"
+                                                v-model="reservation.name"
+                                                placeholder="Entrez la description">
+                                                </b-form-textarea>
+                                            </b-form-group>
+
+                                            <b-row align-h="end">
+                                                <b-col cols="12">
+                                                    <b-button block type="submit" ref="submitReservationBtn" variant="primary" :disabled="!validReservationForm">Reserve maintenant</b-button>
+                                                </b-col>
+                                            </b-row>
+                                        </b-form>
+                                    </b-col>
+                                </b-row>
                             </b-tab>
                             <b-tab @click="active = 'profile'" :active="active === 'profile'" title="Update profile">
                                 <b-row align-h="center">
@@ -126,18 +185,31 @@
 import Footer from './partials/footer.vue'
 import Sidebar from './partials/sidebar.vue'
 import { isUserLoggedIn } from '../auth'
-import { BTab, BTable } from 'bootstrap-vue'
+import { BForm, BFormGroup, BFormInput, BFormSelect, BFormTextarea, BTab, BTable } from 'bootstrap-vue'
 import SecureLS from 'secure-ls'
-import Datepicker from 'vuejs-datepicker'
+import DateRangePicker from 'vue2-daterange-picker'
+import moment from 'moment'
+
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 export default{
     name: 'Dashbaord',
     components: {
         Footer,
         Sidebar,
+        BForm,
+        BFormGroup,
+        BFormInput,
+        BFormSelect,
+        BFormTextarea,
         BTab,
         BTable,
-		Datepicker,
+        DateRangePicker,
+    },
+    filters: {
+        date: function(value){
+            return moment(value).format('DD-MM-YYYY HH:mm:ss')
+        }
     },
     computed: {
         user(){
@@ -158,6 +230,20 @@ export default{
         validProfileForm(){
             return this.user.email !== '' && this.user.name !== '' && this.user.password == this.confirmPassword
         },
+        validReservationForm(){
+            return this.reservation.name !== ''
+        },
+        roomsSelectOptions(){
+            let roomsList = [
+                { value: null, text: 'Veuillez sélectionner une chambre' }
+            ]
+            
+            let parsedRoomsList = this.rooms.map((val, index) => {
+                roomsList.push({ value: val.id, text: val.name })
+            })
+
+            return roomsList
+        }
     },
     methods: {
         logout(){
@@ -258,6 +344,34 @@ export default{
                 .finally(() => {
                     this.$refs.updateProfileBtn.removeAttribute('disabled')
                 })
+        },
+        bookRoom(event){
+            event.preventDefault()
+
+            // Disable button
+            this.$refs.submitReservationBtn.setAttribute('disabled', true)
+
+            // Dispatch API action
+            this.$store.dispatch('bookRoom', this.reservation)
+                .then(response => {
+                    this.$bvToast.toast(response.message, {
+                        title: 'C\'est fait!',
+                        variant: 'success',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+                .catch(error => {
+                    this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
+                })
+                .finally(() => {
+                    this.$refs.submitReservationBtn.removeAttribute('disabled')
+                })
         }
     },
     beforeRouteEnter (to, from, next) {
@@ -270,8 +384,9 @@ export default{
     },
     mounted(){
         // Load rooms
-        if(typeof this.rooms === "undefined" || this.rooms === null || Object.values(this.rooms).length === 0)
-            this.loadRooms();
+        if(typeof this.rooms === "undefined" || this.rooms === null || Object.values(this.rooms).length === 0){
+            this.loadRooms()
+        }
     },
     data(){
         return {
@@ -295,6 +410,36 @@ export default{
                 },
             ],
             confirmPassword: null,
+            reservation: {
+                name: '',
+                description: '',
+                room_id: null,
+                start_date: new Date(),
+                end_date: null,
+            },
+            disabledDates: {
+                dates: [
+                    new Date(2021, 3, 23),
+                    new Date(2016, 9, 17),
+                    new Date(2016, 9, 18)
+                ],
+            },
+            datePickerLocal: {
+                direction: 'ltr',
+                format: 'dd/mm/yyyy H:i',
+                separator: ' - ',
+                applyLabel: 'Apply',
+                cancelLabel: 'Cancel',
+                weekLabel: 'W',
+                customRangeLabel: 'Custom Range',
+                daysOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                firstDay: 0
+            },
+            dateRange: {
+                startDate: null,
+                endDate: null
+            }
         }
     }
 }

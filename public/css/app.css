@@ -1,1 +1,23 @@
-body,html{height:100%}body{background-color:#f8f8f8!important}button{cursor:pointer}.container-fluid .main-card{height:100vh}.card-img{height:100%!important;width:auto}.text-sm{font-size:10pt!important}
+html, body{
+    height: 100%;
+}
+
+body{
+    background-color: #f8f8f8 !important;
+}
+
+button{
+    cursor: pointer;
+}
+
+.container-fluid .main-card{
+    height: 100vh;
+}
+.card-img{
+    height: 100% !important;
+    width: auto;
+}
+
+.text-sm{
+    font-size: 10pt !important;
+}
