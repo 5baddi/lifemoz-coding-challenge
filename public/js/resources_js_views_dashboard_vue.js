@@ -14048,15 +14048,30 @@ __webpack_require__.r(__webpack_exports__);
     },
     renderChart: function renderChart(data) {
       var chartEl = document.getElementById('chart');
+      var vm = this;
+      var label = null;
+      var rates = data.rates.filter(function (val, index) {
+        if (label !== val.room) {
+          label = val.room;
+          var _data = [];
+          _data = data.rates.filter(function (item, idx) {
+            if (item.room == label) {
+              return item.rate;
+            }
+          });
+          return {
+            label: label,
+            data: _data,
+            backgroundColor: vm.getRandomColorHex()
+          };
+        }
+      });
 
       try {
         var chart = new Chart(chartEl, {
           type: 'bar',
           data: {
-            datasets: [{
-              data: data.rates || [12, 50, 100],
-              backgroundColor: [this.getRandomColorHex(), this.getRandomColorHex(), this.getRandomColorHex()]
-            }],
+            datasets: rates,
             labels: data.months || []
           },
           options: {

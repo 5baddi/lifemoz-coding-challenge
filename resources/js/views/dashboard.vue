@@ -495,19 +495,32 @@ export default{
         },
         renderChart(data) {
             const chartEl = document.getElementById('chart')
+            let vm = this
+            let label = null
+            let rates = data.rates.filter(function(val, index){              
+                if(label !== val.room){
+                    label = val.room
+                    let _data = []
+
+                    _data = data.rates.filter(function(item, idx){
+                        if(item.room == label){
+                            return item.rate
+                        }
+                    })
+
+                    return {
+                        label: label,
+                        data: _data,
+                        backgroundColor: vm.getRandomColorHex()
+                    }
+                }
+            })
 
             try{
                 const chart = new Chart(chartEl, {
                     type: 'bar',
                     data: {
-                        datasets: [{
-                            data: data.rates || [12, 50, 100],
-                            backgroundColor: [
-                                this.getRandomColorHex(),
-                                this.getRandomColorHex(),
-                                this.getRandomColorHex(),
-                            ]
-                        },],
+                        datasets: rates,
                         labels: data.months || []
                     },
                     options: {

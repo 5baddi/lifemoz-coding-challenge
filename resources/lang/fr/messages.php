@@ -18,4 +18,5 @@ return [
     'reservation_room_id'   =>  'Nom de la chambre déjà enregistré',
     'timezones_fetched'     =>  'liste des fuseaux horaires récupérée avec succès.',
     'reservations_fetched'     =>  'Toutes les réservations ont été récupérées avec succès.',
+    'room_already_booked'      =>  'chambre déjà réservée entre: ',
 ];

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ReservationResource;
 use App\Repositories\ReservationsRepository;
+use Exception;
 
 class ReservationService
 {
@@ -52,20 +53,37 @@ class ReservationService
         $reservations = $this->reservationRepository->getReservationsByThisYear();
 
         // List of months in current year
-        $from = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', strtotime("January 1st")));
+        $from = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', strtotime('January 1st')));
         $to = Carbon::createFromFormat('Y-m-d H:s:i', date('Y-m-d H:i:s', strtotime('last day of this month')));
-        $diffInMonths = $to->diffInMonths($from);
         $listOfMonths = [];
+        $rates = [];
 
         $interval = DateInterval::createFromDateString('1 month');
         $period   = new DatePeriod($from, $interval, $to);
-        foreach ($period as $month) {
-            $listOfMonths[] = Carbon::parse($month)->format("F");
+        $listOfMonths = [];
+        $rates= [];
+        
+
+        foreach($reservations as $reservation){
+            foreach($period as $item){
+                $month = Carbon::parse($item)->format('F');
+                if(!in_array($month, $listOfMonths)){
+                    $listOfMonths[] = $month;
+                }
+
+                if($reservation->start_date->format('F') === $month){
+                    $bookedDays = $reservation->end_date->diffInDays($reservation->start_date);
+                    $rate = ceil(($bookedDays / cal_days_in_month(CAL_GREGORIAN, $reservation->start_date->format('m'), date('Y'))) * 100);
+                    $rates[] = ['room' => $reservation->room->name, 'rate' => $rate];
+                }else{
+                    $rates[] = ['room' => $reservation->room->name, 'rate' => 0];
+                }
+            }
         }
 
         return [
-            'reservations'  =>  ReservationResource::collection($reservations),
-            'months'        =>  $listOfMonths
+            'months'        =>  $listOfMonths,
+            'rates'         =>  $rates
         ];
     }
 
@@ -96,6 +114,11 @@ class ReservationService
         // Break if data not valid
         if($validator->fails())
             throw new InvalidArgumentException($validator->errors()->first(), 400);
+
+        // Check if already booked
+        if($this->reservationRepository->checkIfAlreadyBooked($data['room_id'], $data['start_date'], $data['end_date'])){
+            throw new Exception(__('messages.room_already_booked') . $data['start_date'] . ' : ' . $data['end_date'], 400);
+        }
 
         // Get validated data
         $data = $validator->validated();
