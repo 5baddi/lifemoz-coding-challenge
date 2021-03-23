@@ -276,10 +276,13 @@ export default{
             this.selectedTimezone = newUser.timezone
             this.calendarOptions.timeZone = newUser.timezone
 
-            // if(this.dateRange.startDate && this.dateRange.endDate){
-            //     this.dateRange.startDate = moment().tz(this.dateRange.startDate, newUser.timezone).format('dd/mm/yyyy HH:mm')
-            //     this.dateRange.endDate = moment().tz(this.dateRange.endDate, newUser.timezone).format('dd/mm/yyyy HH:mm')
-            // }
+            if(this.dateRange.startDate && this.dateRange.endDate){
+                this.dateRange.startDate = moment(this.dateRange.startDate).format('dd/mm/yyyy HH:mm').tz(newUser.timezone)
+                this.dateRange.startDate = this.dateRange.startDate.tz(newUser.timezone)
+                
+                this.dateRange.endDate = moment(this.dateRange.endDate).format('dd/mm/yyyy HH:mm').tz(newUser.timezone)
+                this.dateRange.endDate = this.dateRange.endDate.tz(newUser.timezone)
+            }
         },
         reservations: function(newReservations, oldReservations){
             this.calendarOptions.events = newReservations.map((val, index) => {
@@ -292,8 +295,8 @@ export default{
         },
         dateRange: function(newDateRange, oldDateRange){
             if(newDateRange.startDate && newDateRange.endDate){
-                this.reservation.start_date = newDateRange.startDate
-                this.reservation.end_date = newDateRange.endDate
+                this.reservation.start_date = moment(newDateRange.startDate).format('dd/mm/yyyy HH:mm')
+                this.reservation.end_date = moment(newDateRange.endDate).format('dd/mm/yyyy HH:mm')
             }
         }
     },
