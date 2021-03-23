@@ -32,8 +32,8 @@ class Reservation extends Model
     protected $casts = [
         'user_id'       => 'integer',
         'room_id'       => 'integer',
-        'start_date'    => 'dateTime',
-        'end_date'      => 'dateTime',
+        'start_date'    => 'datetime',
+        'end_date'      => 'datetime',
     ];
 
     /**

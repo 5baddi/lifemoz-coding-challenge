@@ -61,12 +61,14 @@ class ReservationController extends Controller
                 201
             );
         }catch(InvalidArgumentException $ex){
+            dd($ex);
             return response()->error(
                 __('auth.signup_fields'),
                 [$ex->getMessage()],
                 $ex->getCode()
             );
         }catch(Exception $ex){
+            dd($ex);
             return response()->error(
                 __('messages.error'),
                 [$ex->getMessage()],

@@ -9,10 +9,10 @@
                                 <b-row>
                                     <b-col md="12" class="mt-3">
                                         <h2>Taux de remplissage pour chaque mois</h2>
-                                        <canvas ref="chart"></canvas>
+                                        <canvas id="chart"></canvas>
                                     </b-col>
                                     <b-col md="12" class="mt-3">
-                                        <FullCalendar :options="calendarOptions" />
+                                        <FullCalendar ref="calendar" :options="calendarOptions" />
                                     </b-col>
                                 </b-row>
                             </b-tab>
@@ -79,12 +79,9 @@
                                                     :time-picker="true"
                                                     :linked-calendars="true"
                                                     :ranges="false"
-                                                    :locale-data="{ firstDay: 1, format: 'DD-MM-YYYY HH:mm:ss' }"
+                                                    :locale-data="datePickerLocal"
                                                     :date-range="dateRange"
                                                     v-model="dateRange">
-                                                    <template v-slot:input="picker" style="min-width: 350px;">
-                                                        {{ picker.startDate | date }} - {{ picker.endDate | date }}
-                                                    </template>
                                                 </date-range-picker>
                                             </b-form-group>
                                             <b-form-group
@@ -93,7 +90,7 @@
                                                 label-for="reservation-description">
                                                 <b-form-textarea
                                                 id="reservation-description"
-                                                v-model="reservation.name"
+                                                v-model="reservation.description"
                                                 placeholder="Entrez la description">
                                                 </b-form-textarea>
                                             </b-form-group>
@@ -207,7 +204,7 @@ import { isUserLoggedIn } from '../auth'
 import { BForm, BFormGroup, BFormInput, BFormSelect, BFormTextarea, BTab, BTable } from 'bootstrap-vue'
 import SecureLS from 'secure-ls'
 import DateRangePicker from 'vue2-daterange-picker'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import FullCalendar from '@fullcalendar/vue'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -230,11 +227,6 @@ export default{
         BTable,
         DateRangePicker,
         FullCalendar,
-    },
-    filters: {
-        date: function(value){
-            return moment(value).format('DD-MM-YYYY HH:mm:ss')
-        }
     },
     computed: {
         user(){
@@ -265,7 +257,7 @@ export default{
             return this.user.email !== '' && this.user.name !== '' && this.user.password == this.confirmPassword
         },
         validReservationForm(){
-            return this.reservation.name !== ''
+            return this.reservation.name !== '' && this.reservation.room_id && this.dateRange.startDate && this.dateRange.endDate
         },
         roomsSelectOptions(){
             let roomsList = [
@@ -282,6 +274,27 @@ export default{
     watch: {
         user: function(newUser, oldUser){
             this.selectedTimezone = newUser.timezone
+            this.calendarOptions.timeZone = newUser.timezone
+
+            // if(this.dateRange.startDate && this.dateRange.endDate){
+            //     this.dateRange.startDate = moment().tz(this.dateRange.startDate, newUser.timezone).format('dd/mm/yyyy HH:mm')
+            //     this.dateRange.endDate = moment().tz(this.dateRange.endDate, newUser.timezone).format('dd/mm/yyyy HH:mm')
+            // }
+        },
+        reservations: function(newReservations, oldReservations){
+            this.calendarOptions.events = newReservations.map((val, index) => {
+                return {
+                    title: val.name,
+                    start: val.start_date,
+                    end: val.end_date,
+                }
+            })
+        },
+        dateRange: function(newDateRange, oldDateRange){
+            if(newDateRange.startDate && newDateRange.endDate){
+                this.reservation.start_date = newDateRange.startDate
+                this.reservation.end_date = newDateRange.endDate
+            }
         }
     },
     methods: {
@@ -438,15 +451,20 @@ export default{
                 })
         },
         renderChart(data) {
-            const chartEl = this.$refs.chart
+            const chartEl = document.getElementById('chart')
 
             try{
                 const chart = new Chart(chartEl, {
                     type: 'bar',
                     data: data
                 })
-            }catch(e){
-                chartEl.style.display = "none !important"
+            }catch(error){
+                this.$bvToast.toast(error.message, {
+                        title: 'Quelque chose ne va pas!',
+                        variant: 'warning',
+                        solid: true,
+                        autoHideDelay: 5000
+                    })
             }
         }
     },
@@ -457,6 +475,20 @@ export default{
         }
 
         next()
+    },
+    created(){
+        this.renderChart({
+                datasets: [{
+                    data: [
+                        12,
+                        90
+                    ],
+                }],
+                labels: [
+                    'Room one',
+                    'Room two',
+                ]
+            })
     },
     mounted(){
         // Load time zones
@@ -524,7 +556,7 @@ export default{
                 name: '',
                 description: '',
                 room_id: null,
-                start_date: new Date(),
+                start_date: moment().format('DD/MM/yyyy HH:mm'),
                 end_date: null,
             },
             disabledDates: {
@@ -536,15 +568,14 @@ export default{
             },
             datePickerLocal: {
                 direction: 'ltr',
-                format: 'dd/mm/yyyy H:i',
+                format: 'dd/mm/yyyy',
                 separator: ' - ',
-                applyLabel: 'Apply',
-                cancelLabel: 'Cancel',
-                weekLabel: 'W',
-                customRangeLabel: 'Custom Range',
-                daysOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-                monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                firstDay: 0
+                applyLabel: 'Appliquer',
+                cancelLabel: 'Annuler',
+                weekLabel: 'S',
+                daysOfWeek: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+                monthNames: ['Janvier ', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                firstDay: 1
             },
             dateRange: {
                 startDate: null,
@@ -554,7 +585,9 @@ export default{
                 plugins: [ dayGridPlugin, interactionPlugin ],
                 initialView: 'dayGridMonth',
                 locale: frLocale,
-                timeZone: 'local'
+                timeZone: 'local',
+                events: [],
+                selectable: true,
             }
         }
     }

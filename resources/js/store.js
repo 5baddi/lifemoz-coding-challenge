@@ -120,6 +120,18 @@ const actions = {
             .catch(error => reject(error))
         })
     },
+    bookRoom({ commit, state, dispatch}, data){
+        return new Promise((resolve, reject) => {
+            api.post("v1/reservations", data)
+            .then(response => {
+                // Dispatch action
+                dispatch('fetchReservations')
+
+                resolve(response.data)
+            })
+            .catch(error => reject(error))
+        })
+    },
     fetchRooms({ commit, state}, data){
         return new Promise((resolve, reject) => {
             api.get("v1/rooms", data)

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ReservationResource;
 use App\Repositories\ReservationsRepository;
+use Carbon\Carbon;
 
 class ReservationService
 {
@@ -52,8 +53,8 @@ class ReservationService
             [
                 'name'          =>  'required|string',
                 'room_id'       =>  'required|integer|exists:rooms,id',
-                'start_date'    =>  'required|date|after_or_equal:today',
-                'end_date'      =>  'required|date|after:start_date',
+                'start_date'    =>  'required',
+                'end_date'      =>  'required',
                 'description'   =>  'nullable|string',
             ],
             [
